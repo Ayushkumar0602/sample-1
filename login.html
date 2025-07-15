@@ -940,12 +940,13 @@
                 });
             }
 
-            redirectToDashboard() {
-                // In a real application, this would redirect to dashboard.html
-                alert('Login successful! Redirecting to dashboard...');
-                console.log('User data stored:', this.sessionData.get('userData'));
-                console.log('Login logs:', this.sessionData.get('loginLogs'));
-            }
+          redirectToDashboard() {
+    console.log('User data stored:', this.sessionData.get('userData'));
+    console.log('Login logs:', this.sessionData.get('loginLogs'));
+    
+    // Redirect to dashboard page
+    window.location.href = 'dashboard.html';
+}
 
             showAlert(type, message) {
                 const alertContainer = document.getElementById('alertContainer');
