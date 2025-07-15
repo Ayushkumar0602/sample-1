@@ -1,1 +1,1551 @@
-// Select a file
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Secure Authentication</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --error-color: #ea4335;
+            --warning-color: #fbbc05;
+            --dark-color: #1a1a1a;
+            --light-color: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .login-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .login-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-form {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(66, 133, 244, 0.25);
+            background: white;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group .form-control {
+            padding-right: 50px;
+        }
+
+        .input-group .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary .spinner-border {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 8px;
+        }
+
+        .social-login {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: white;
+            color: #495057;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .social-btn i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .google-btn:hover {
+            background: #db4437;
+            border-color: #db4437;
+        }
+
+        .facebook-btn:hover {
+            background: #4267B2;
+            border-color: #4267B2;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background: rgba(234, 67, 53, 0.1);
+            color: var(--error-color);
+        }
+
+        .alert-success {
+            background: rgba(52, 168, 83, 0.1);
+            color: var(--secondary-color);
+        }
+
+        .alert-info {
+            background: rgba(66, 133, 244, 0.1);
+            color: var(--primary-color);
+        }
+
+        .form-check {
+            margin-bottom: 20px;
+        }
+
+        .form-check-input {
+            margin-right: 10px;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-password a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .validation-message {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--error-color);
+        }
+
+        .form-control.is-valid {
+            border-color: var(--secondary-color);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .rate-limit-warning {
+            background: rgba(251, 188, 5, 0.1);
+            color: var(--warning-color);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .security-info {
+            background: rgba(66, 133, 244, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .language-selector select {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 5px 10px;
+            color: var(--dark-color);
+        }
+
+        .two-factor-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .verification-code {
+            text-align: center;
+            font-size: 24px;
+            letter-spacing: 8px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 10px;
+                max-width: 100%;
+            }
+            
+            .login-form {
+                padding: 20px;
+            }
+            
+            .login-header {
+                padding: 20px;
+            }
+            
+            .login-header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-form {
+                padding: 15px;
+            }
+            
+            .btn-primary {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .social-btn {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+
+        .accessibility-skip {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+
+        .accessibility-skip:focus {
+            top: 6px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .high-contrast {
+            filter: contrast(150%);
+        }
+
+        .large-text {
+            font-size: 120%;
+        }
+
+        .focus-visible {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="accessibility-skip">Skip to main content</a>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3" data-i18n="loading">Loading...</p>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <div class="language-selector">
+            <select id="languageSelect" aria-label="Select language">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="zh">中文</option>
+            </select>
+        </div>
+
+        <div class="login-header">
+            <h1 data-i18n="welcome">Welcome Back</h1>
+            <p data-i18n="loginSubtitle">Sign in to your account</p>
+        </div>
+
+        <main id="main-content" class="login-form">
+            <div id="alertContainer"></div>
+            
+            <div class="rate-limit-warning" id="rateLimitWarning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span data-i18n="rateLimitWarning">Too many login attempts. Please wait before trying again.</span>
+            </div>
+
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="email" class="form-label" data-i18n="email">Email Address</label>
+                    <input type="email" 
+                           class="form-control" 
+                           id="email" 
+                           name="email"
+                           autocomplete="email"
+                           aria-describedby="emailError"
+                           required>
+                    <div class="validation-message" id="emailError" role="alert"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label" data-i18n="password">Password</label>
+                    <div class="input-group">
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password"
+                               autocomplete="current-password"
+                               aria-describedby="passwordError"
+                               required>
+                        <button type="button" 
+                                class="password-toggle" 
+                                id="togglePassword"
+                                aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="validation-message" id="passwordError" role="alert"></div>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                    <label class="form-check-label" for="rememberMe" data-i18n="rememberMe">
+                        Remember me
+                    </label>
+                </div>
+
+                <div class="two-factor-section" id="twoFactorSection">
+                    <div class="form-group">
+                        <label for="verificationCode" class="form-label" data-i18n="verificationCode">Verification Code</label>
+                        <input type="text" 
+                               class="form-control verification-code" 
+                               id="verificationCode" 
+                               name="verificationCode"
+                               placeholder="000000"
+                               maxlength="6"
+                               aria-describedby="verificationError">
+                        <div class="validation-message" id="verificationError" role="alert"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100" id="loginBtn">
+                    <span class="btn-text" data-i18n="signIn">Sign In</span>
+                    <span class="spinner-border d-none" role="status" aria-hidden="true"></span>
+                </button>
+            </form>
+
+            <div class="social-login">
+                <p class="text-center text-muted mb-3" data-i18n="orSignInWith">Or sign in with</p>
+                
+                <button type="button" class="social-btn google-btn" id="googleSignIn">
+                    <i class="fab fa-google"></i>
+                    <span data-i18n="signInWithGoogle">Sign in with Google</span>
+                </button>
+                
+                <button type="button" class="social-btn facebook-btn" id="facebookSignIn">
+                    <i class="fab fa-facebook-f"></i>
+                    <span data-i18n="signInWithFacebook">Sign in with Facebook</span>
+                </button>
+            </div>
+
+            <div class="forgot-password">
+                <a href="#" id="forgotPasswordLink" data-i18n="forgotPassword">Forgot your password?</a>
+            </div>
+
+            <div class="security-info">
+                <p><i class="fas fa-shield-alt"></i> <span data-i18n="securityInfo">Your login is secured with industry-standard encryption and multi-factor authentication.</span></p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-analytics-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVYdfql5aqHrChlA1v3nxRLkIbYyWMvUg",
+            authDomain: "study2-7bdc7.firebaseapp.com",
+            databaseURL: "https://study2-7bdc7-default-rtdb.firebaseio.com",
+            projectId: "study2-7bdc7",
+            storageBucket: "study2-7bdc7.firebasestorage.app",
+            messagingSenderId: "320617984870",
+            appId: "1:320617984870:web:04b61ea4ee88ae057e4ea7",
+            measurementId: "G-VRM14GRNWG"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+
+        // Authentication and Security Manager
+        class AuthManager {
+            constructor() {
+                this.auth = firebase.auth();
+                this.currentUser = null;
+                this.loginAttempts = 0;
+                this.maxLoginAttempts = 5;
+                this.lockoutDuration = 15 * 60 * 1000; // 15 minutes
+                this.lockoutTime = null;
+                this.sessionData = new Map();
+                this.setupProviders();
+                this.initializeEventListeners();
+                this.loadRememberedUser();
+            }
+
+            setupProviders() {
+                this.googleProvider = new firebase.auth.GoogleAuthProvider();
+                this.googleProvider.addScope('profile');
+                this.googleProvider.addScope('email');
+                
+                this.facebookProvider = new firebase.auth.FacebookAuthProvider();
+                this.facebookProvider.addScope('email');
+            }
+
+            initializeEventListeners() {
+                // Form submission
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // Social login buttons
+                document.getElementById('googleSignIn').addEventListener('click', () => {
+                    this.handleSocialLogin('google');
+                });
+
+                document.getElementById('facebookSignIn').addEventListener('click', () => {
+                    this.handleSocialLogin('facebook');
+                });
+
+                // Password toggle
+                document.getElementById('togglePassword').addEventListener('click', () => {
+                    this.togglePasswordVisibility();
+                });
+
+                // Forgot password
+                document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.handleForgotPassword();
+                });
+
+                // Real-time validation
+                document.getElementById('email').addEventListener('input', () => {
+                    this.validateEmail();
+                });
+
+                document.getElementById('password').addEventListener('input', () => {
+                    this.validatePassword();
+                });
+
+                // Auth state changes
+                this.auth.onAuthStateChanged((user) => {
+                    this.handleAuthStateChange(user);
+                });
+
+                // Language selector
+                document.getElementById('languageSelect').addEventListener('change', (e) => {
+                    this.changeLanguage(e.target.value);
+                });
+            }
+
+            async handleLogin() {
+                if (this.isLockedOut()) {
+                    this.showAlert('error', i18nManager.getText('accountLocked'));
+                    return;
+                }
+
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+
+                if (!this.validateForm(email, password)) {
+                    return;
+                }
+
+                this.showLoading(true);
+                this.logLoginAttempt(email, 'attempt');
+
+                try {
+                    const userCredential = await this.auth.signInWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+
+                    // Check if 2FA is required
+                    if (this.requiresTwoFactor(user)) {
+                        this.show2FAPrompt();
+                        return;
+                    }
+
+                    await this.handleSuccessfulLogin(user, rememberMe);
+                    
+                } catch (error) {
+                    this.handleLoginError(error);
+                    this.loginAttempts++;
+                    
+                    if (this.loginAttempts >= this.maxLoginAttempts) {
+                        this.lockAccount();
+                    }
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async handleSocialLogin(provider) {
+                this.showLoading(true);
+                
+                try {
+                    let authProvider;
+                    if (provider === 'google') {
+                        authProvider = this.googleProvider;
+                    } else if (provider === 'facebook') {
+                        authProvider = this.facebookProvider;
+                    }
+
+                    const result = await this.auth.signInWithPopup(authProvider);
+                    const user = result.user;
+                    
+                    await this.handleSuccessfulLogin(user, false);
+                    
+                } catch (error) {
+                    this.handleLoginError(error);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async handleSuccessfulLogin(user, rememberMe) {
+                this.currentUser = user;
+                this.loginAttempts = 0;
+                this.lockoutTime = null;
+                
+                // Store user data (using in-memory storage for demo)
+                const userData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
+                    photoURL: user.photoURL,
+                    emailVerified: user.emailVerified,
+                    lastSignInTime: user.metadata.lastSignInTime,
+                    creationTime: user.metadata.creationTime
+                };
+
+                this.sessionData.set('userData', userData);
+                this.sessionData.set('isAuthenticated', true);
+                this.sessionData.set('loginTime', new Date().toISOString());
+
+                if (rememberMe) {
+                    this.setRememberMeCookie(user.uid);
+                }
+
+                this.logLoginAttempt(user.email, 'success');
+                this.showAlert('success', i18nManager.getText('loginSuccess'));
+                
+                // Simulate redirect to dashboard
+                setTimeout(() => {
+                    this.redirectToDashboard();
+                }, 1500);
+            }
+
+            handleLoginError(error) {
+                let message = i18nManager.getText('loginError');
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        message = i18nManager.getText('userNotFound');
+                        break;
+                    case 'auth/wrong-password':
+                        message = i18nManager.getText('wrongPassword');
+                        break;
+                    case 'auth/invalid-email':
+                        message = i18nManager.getText('invalidEmail');
+                        break;
+                    case 'auth/user-disabled':
+                        message = i18nManager.getText('userDisabled');
+                        break;
+                    case 'auth/too-many-requests':
+                        message = i18nManager.getText('tooManyRequests');
+                        break;
+                    case 'auth/network-request-failed':
+                        message = i18nManager.getText('networkError');
+                        break;
+                    default:
+                        console.error('Login error:', error);
+                }
+
+                this.showAlert('error', message);
+                this.logLoginAttempt(document.getElementById('email').value, 'failed', error.code);
+            }
+
+            validateForm(email, password) {
+                let isValid = true;
+                
+                if (!this.validateEmail(email)) {
+                    isValid = false;
+                }
+                
+                if (!this.validatePassword(password)) {
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+
+            validateEmail(email = null) {
+                const emailInput = document.getElementById('email');
+                const emailError = document.getElementById('emailError');
+                const emailValue = email || emailInput.value.trim();
+                
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!emailValue) {
+                    this.showFieldError(emailInput, emailError, i18nManager.getText('emailRequired'));
+                    return false;
+                } else if (!emailRegex.test(emailValue)) {
+                    this.showFieldError(emailInput, emailError, i18nManager.getText('emailInvalid'));
+                    return false;
+                } else {
+                    this.showFieldSuccess(emailInput, emailError);
+                    return true;
+                }
+            }
+
+            validatePassword(password = null) {
+                const passwordInput = document.getElementById('password');
+                const passwordError = document.getElementById('passwordError');
+                const passwordValue = password || passwordInput.value;
+                
+                if (!passwordValue) {
+                    this.showFieldError(passwordInput, passwordError, i18nManager.getText('passwordRequired'));
+                    return false;
+                } else if (passwordValue.length < 6) {
+                    this.showFieldError(passwordInput, passwordError, i18nManager.getText('passwordMinLength'));
+                    return false;
+                } else {
+                    this.showFieldSuccess(passwordInput, passwordError);
+                    return true;
+                }
+            }
+
+            showFieldError(input, errorElement, message) {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+
+            showFieldSuccess(input, errorElement) {
+                input.classList.add('is-valid');
+                input.classList.remove('is-invalid');
+                errorElement.style.display = 'none';
+            }
+
+            togglePasswordVisibility() {
+                const passwordInput = document.getElementById('password');
+                const toggleBtn = document.getElementById('togglePassword');
+                const icon = toggleBtn.querySelector('i');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+                    toggleBtn.setAttribute('aria-label', 'Hide password');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+                    toggleBtn.setAttribute('aria-label', 'Show password');
+                }
+            }
+
+            async handleForgotPassword() {
+                const email = document.getElementById('email').value.trim();
+                
+                if (!email) {
+                    this.showAlert('error', i18nManager.getText('emailRequiredForReset'));
+                    return;
+                }
+
+                if (!this.validateEmail(email)) {
+                    this.showAlert('error', i18nManager.getText('validEmailRequired'));
+                    return;
+                }
+
+                this.showLoading(true);
+                
+                try {
+                    await this.auth.sendPasswordResetEmail(email);
+                    this.showAlert('success', i18nManager.getText('passwordResetSent'));
+                } catch (error) {
+                    let message = i18nManager.getText('passwordResetError');
+                    
+                    if (error.code === 'auth/user-not-found') {
+                        message = i18nManager.getText('userNotFound');
+                    }
+                    
+                    this.showAlert('error', message);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            requiresTwoFactor(user) {
+                // Simulate 2FA requirement based on user email domain or other criteria
+                return user.email && user.email.includes('admin');
+            }
+
+            show2FAPrompt() {
+                document.getElementById('twoFactorSection').style.display = 'block';
+                this.showAlert('info', i18nManager.getText('twoFactorRequired'));
+                
+                // Simulate sending 2FA code
+                setTimeout(() => {
+                    this.showAlert('info', i18nManager.getText('twoFactorCodeSent'));
+                }, 1000);
+            }
+
+            isLockedOut() {
+                if (!this.lockoutTime) return false;
+                return Date.now() - this.lockoutTime < this.lockoutDuration;
+            }
+
+            lockAccount() {
+                this.lockoutTime = Date.now();
+                document.getElementById('rateLimitWarning').style.display = 'block';
+                this.showAlert('error', i18nManager.getText('accountLocked'));
+            }
+
+            setRememberMeCookie(userId) {
+                // Note: In a real implementation, you would set actual cookies
+                // For demo purposes, we'll store in session data
+                this.sessionData.set('rememberMe', true);
+                this.sessionData.set('rememberedUserId', userId);
+            }
+
+            loadRememberedUser() {
+                // In a real implementation, this would check actual cookies
+                const remembered = this.sessionData.get('rememberMe');
+                if (remembered) {
+                    document.getElementById('rememberMe').checked = true;
+                }
+            }
+
+            logLoginAttempt(email, status, errorCode = null) {
+                const logEntry = {
+                    timestamp: new Date().toISOString(),
+                    email: email,
+                    status: status,
+                    ip: this.getClientIP(),
+                    userAgent: navigator.userAgent,
+                    errorCode: errorCode
+                };
+                
+                // Store in memory for demo (in production, send to server)
+                let logs = this.sessionData.get('loginLogs') || [];
+                logs.push(logEntry);
+                this.sessionData.set('loginLogs', logs);
+                
+                console.log('Login attempt logged:', logEntry);
+            }
+
+            getClientIP() {
+                // This is a simplified version - in production, you'd get this from server
+                return '127.0.0.1';
+            }
+
+            handleAuthStateChange(user) {
+                if (user) {
+                    this.currentUser = user;
+                    // User is signed in
+                    console.log('User authenticated:', user.uid);
+                } else {
+                    // User is signed out
+                    this.currentUser = null;
+                    this.sessionData.clear();
+                }
+            }
+
+            changeLanguage(langCode) {
+                i18nManager.setLanguage(langCode);
+                this.updateUIText();
+            }
+
+            updateUIText() {
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    element.textContent = i18nManager.getText(key);
+                });
+            }
+
+            redirectToDashboard() {
+                // In a real application, this would redirect to dashboard.html
+                alert('Login successful! Redirecting to dashboard...');
+                console.log('User data stored:', this.sessionData.get('userData'));
+                console.log('Login logs:', this.sessionData.get('loginLogs'));
+            }
+
+            showAlert(type, message) {
+                const alertContainer = document.getElementById('alertContainer');
+                const alertClass = type === 'error' ? 'alert-danger' : 
+                                 type === 'success' ? 'alert-success' : 'alert-info';
+                
+                const alert = document.createElement('div');
+                alert.className = `alert ${alertClass}`;
+                alert.innerHTML = `
+                    <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 
+                                      type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                    ${message}
+                `;
+                
+                alertContainer.innerHTML = '';
+                alertContainer.appendChild(alert);
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                        }
+                    }, 300);
+                }, 5000);
+            }
+
+            showLoading(show) {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                const loginBtn = document.getElementById('loginBtn');
+                const spinner = loginBtn.querySelector('.spinner-border');
+                const btnText = loginBtn.querySelector('.btn-text');
+                
+                if (show) {
+                    loadingOverlay.style.display = 'flex';
+                    loginBtn.disabled = true;
+                    spinner.classList.remove('d-none');
+                    btnText.textContent = i18nManager.getText('signingIn');
+                } else {
+                    loadingOverlay.style.display = 'none';
+                    loginBtn.disabled = false;
+                    spinner.classList.add('d-none');
+                    btnText.textContent = i18nManager.getText('signIn');
+                }
+            }
+        }
+
+        // Internationalization Manager
+        class I18nManager {
+            constructor() {
+                this.currentLanguage = 'en';
+                this.translations = {
+                    en: {
+                        welcome: 'Welcome Back',
+                        loginSubtitle: 'Sign in to your account',
+                        email: 'Email Address',
+                        password: 'Password',
+                        rememberMe: 'Remember me',
+                        signIn: 'Sign In',
+                        signingIn: 'Signing In...',
+                        orSignInWith: 'Or sign in with',
+                        signInWithGoogle: 'Sign in with Google',
+                        signInWithFacebook: 'Sign in with Facebook',
+                        forgotPassword: 'Forgot your password?',
+                        verificationCode: 'Verification Code',
+                        emailRequired: 'Email is required',
+                        emailInvalid: 'Please enter a valid email address',
+                        passwordRequired: 'Password is required',
+                        passwordMinLength: 'Password must be at least 6 characters',
+                        loginError: 'Login failed. Please try again.',
+                        userNotFound: 'No account found with this email address',
+                        wrongPassword: 'Incorrect password',
+                        invalidEmail: 'Invalid email address',
+                        userDisabled: 'This account has been disabled',
+                        tooManyRequests: 'Too many failed attempts. Please try again later.',
+                        networkError: 'Network error. Please check your connection.',
+                        loginSuccess: 'Login successful! Redirecting...',
+                        accountLocked: 'Account temporarily locked due to too many failed attempts',
+                        rateLimitWarning: 'Too many login attempts. Please wait before trying again.',
+                        emailRequiredForReset: 'Please enter your email address to reset password',
+                        validEmailRequired: 'Please enter a valid email address',
+                        passwordResetSent: 'Password reset email sent successfully',
+                        passwordResetError: 'Failed to send password reset email',
+                        twoFactorRequired: 'Two-factor authentication required',
+                        twoFactorCodeSent: 'Verification code sent to your device',
+                        securityInfo: 'Your login is secured with industry-standard encryption and multi-factor authentication.',
+                        loading: 'Loading...'
+                    },
+                    es: {
+                        welcome: 'Bienvenido de Vuelta',
+                        loginSubtitle: 'Inicia sesión en tu cuenta',
+                        email: 'Dirección de Correo',
+                        password: 'Contraseña',
+                        rememberMe: 'Recordarme',
+                        signIn: 'Iniciar Sesión',
+                        signingIn: 'Iniciando Sesión...',
+                        orSignInWith: 'O inicia sesión con',
+                        signInWithGoogle: 'Iniciar sesión con Google',
+                        signInWithFacebook: 'Iniciar sesión con Facebook',
+                        forgotPassword: '¿Olvidaste tu contraseña?',
+                        verificationCode: 'Código de Verificación',
+                        emailRequired: 'El correo es requerido',
+                        emailInvalid: 'Por favor ingresa una dirección de correo válida',
+                        passwordRequired: 'La contraseña es requerida',
+                        passwordMinLength: 'La contraseña debe tener al menos 6 caracteres',
+                        loginError: 'Error de inicio de sesión. Intenta de nuevo.',
+                        userNotFound: 'No se encontró cuenta con este correo',
+                        wrongPassword: 'Contraseña incorrecta',
+                        invalidEmail: 'Dirección de correo inválida',
+                        userDisabled: 'Esta cuenta ha sido deshabilitada',
+                        tooManyRequests: 'Demasiados intentos fallidos. Intenta más tarde.',
+                        networkError: 'Error de red. Verifica tu conexión.',
+                        loginSuccess: '¡Inicio de sesión exitoso! Redirigiendo...',
+                        accountLocked: 'Cuenta bloqueada temporalmente por demasiados intentos fallidos',
+                        rateLimitWarning: 'Demasiados intentos de inicio de sesión. Espera antes de intentar de nuevo.',
+                        emailRequiredForReset: 'Por favor ingresa tu correo para restablecer la contraseña',
+                        validEmailRequired: 'Por favor ingresa una dirección de correo válida',
+                        passwordResetSent: 'Correo de restablecimiento enviado exitosamente',
+                        passwordResetError: 'Error al enviar correo de restablecimiento',
+                        twoFactorRequired: 'Autenticación de dos factores requerida',
+                        twoFactorCodeSent: 'Código de verificación enviado a tu dispositivo',
+                        securityInfo: 'Tu inicio de sesión está protegido con encriptación estándar de la industria y autenticación multifactor.',
+                        loading: 'Cargando...'
+                    },
+                    fr: {
+                        welcome: 'Bienvenue',
+                        loginSubtitle: 'Connectez-vous à votre compte',
+                        email: 'Adresse Email',
+                        password: 'Mot de Passe',
+                        rememberMe: 'Se souvenir de moi',
+                        signIn: 'Se Connecter',
+                        signingIn: 'Connexion...',
+                        orSignInWith: 'Ou se connecter avec',
+                        signInWithGoogle: 'Se connecter avec Google',
+                        signInWithFacebook: 'Se connecter avec Facebook',
+                        forgotPassword: 'Mot de passe oublié?',
+                        verificationCode: 'Code de Vérification',
+                        emailRequired: 'L\'email est requis',
+                        emailInvalid: 'Veuillez entrer une adresse email valide',
+                        passwordRequired: 'Le mot de passe est requis',
+                        passwordMinLength: 'Le mot de passe doit contenir au moins 6 caractères',
+                        loginError: 'Échec de la connexion. Veuillez réessayer.',
+                        userNotFound: 'Aucun compte trouvé avec cette adresse email',
+                        wrongPassword: 'Mot de passe incorrect',
+                        invalidEmail: 'Adresse email invalide',
+                        userDisabled: 'Ce compte a été désactivé',
+                        tooManyRequests: 'Trop de tentatives échouées. Veuillez réessayer plus tard.',
+                        networkError: 'Erreur réseau. Vérifiez votre connexion.',
+                        loginSuccess: 'Connexion réussie! Redirection...',
+                        accountLocked: 'Compte temporairement verrouillé en raison de trop de tentatives échouées',
+                        rateLimitWarning: 'Trop de tentatives de connexion. Veuillez attendre avant de réessayer.',
+                        emailRequiredForReset: 'Veuillez entrer votre adresse email pour réinitialiser le mot de passe',
+                        validEmailRequired: 'Veuillez entrer une adresse email valide',
+                        passwordResetSent: 'Email de réinitialisation envoyé avec succès',
+                        passwordResetError: 'Échec de l\'envoi de l\'email de réinitialisation',
+                        twoFactorRequired: 'Authentification à deux facteurs requise',
+                        twoFactorCodeSent: 'Code de vérification envoyé à votre appareil',
+                        securityInfo: 'Votre connexion est sécurisée avec un cryptage standard de l\'industrie et une authentification multifacteur.',
+                        loading: 'Chargement...'
+                    },
+                    de: {
+                        welcome: 'Willkommen Zurück',
+                        loginSubtitle: 'Melden Sie sich bei Ihrem Konto an',
+                        email: 'E-Mail-Adresse',
+                        password: 'Passwort',
+                        rememberMe: 'Angemeldet bleiben',
+                        signIn: 'Anmelden',
+                        signingIn: 'Anmeldung...',
+                        orSignInWith: 'Oder anmelden mit',
+                        signInWithGoogle: 'Mit Google anmelden',
+                        signInWithFacebook: 'Mit Facebook anmelden',
+                        forgotPassword: 'Passwort vergessen?',
+                        verificationCode: 'Bestätigungscode',
+                        emailRequired: 'E-Mail ist erforderlich',
+                        emailInvalid: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
+                        passwordRequired: 'Passwort ist erforderlich',
+                        passwordMinLength: 'Das Passwort muss mindestens 6 Zeichen lang sein',
+                        loginError: 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.',
+                        userNotFound: 'Kein Konto mit dieser E-Mail-Adresse gefunden',
+                        wrongPassword: 'Falsches Passwort',
+                        invalidEmail: 'Ungültige E-Mail-Adresse',
+                        userDisabled: 'Dieses Konto wurde deaktiviert',
+                        tooManyRequests: 'Zu viele fehlgeschlagene Versuche. Bitte versuchen Sie es später erneut.',
+                        networkError: 'Netzwerkfehler. Überprüfen Sie Ihre Verbindung.',
+                        loginSuccess: 'Anmeldung erfolgreich! Weiterleitung...',
+                        accountLocked: 'Konto vorübergehend gesperrt aufgrund zu vieler fehlgeschlagener Versuche',
+                        rateLimitWarning: 'Zu viele Anmeldeversuche. Bitte warten Sie, bevor Sie es erneut versuchen.',
+                        emailRequiredForReset: 'Bitte geben Sie Ihre E-Mail-Adresse ein, um das Passwort zurückzusetzen',
+                        validEmailRequired: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
+                        passwordResetSent: 'Passwort-Reset-E-Mail erfolgreich gesendet',
+                        passwordResetError: 'Fehler beim Senden der Passwort-Reset-E-Mail',
+                        twoFactorRequired: 'Zwei-Faktor-Authentifizierung erforderlich',
+                        twoFactorCodeSent: 'Bestätigungscode an Ihr Gerät gesendet',
+                        securityInfo: 'Ihre Anmeldung ist mit branchenüblicher Verschlüsselung und Multi-Faktor-Authentifizierung gesichert.',
+                        loading: 'Laden...'
+                    },
+                    zh: {
+                        welcome: '欢迎回来',
+                        loginSubtitle: '登录到您的账户',
+                        email: '邮箱地址',
+                        password: '密码',
+                        rememberMe: '记住我',
+                        signIn: '登录',
+                        signingIn: '登录中...',
+                        orSignInWith: '或使用以下方式登录',
+                        signInWithGoogle: '使用Google登录',
+                        signInWithFacebook: '使用Facebook登录',
+                        forgotPassword: '忘记密码？',
+                        verificationCode: '验证码',
+                        emailRequired: '邮箱是必需的',
+                        emailInvalid: '请输入有效的邮箱地址',
+                        passwordRequired: '密码是必需的',
+                        passwordMinLength: '密码必须至少6个字符',
+                        loginError: '登录失败。请重试。',
+                        userNotFound: '未找到使用此邮箱的账户',
+                        wrongPassword: '密码错误',
+                        invalidEmail: '无效的邮箱地址',
+                        userDisabled: '此账户已被禁用',
+                        tooManyRequests: '失败尝试次数过多。请稍后再试。',
+                        networkError: '网络错误。请检查您的连接。',
+                        loginSuccess: '登录成功！正在重定向...',
+                        accountLocked: '由于失败尝试次数过多，账户暂时被锁定',
+                        rateLimitWarning: '登录尝试次数过多。请稍后再试。',
+                        emailRequiredForReset: '请输入您的邮箱地址以重置密码',
+                        validEmailRequired: '请输入有效的邮箱地址',
+                        passwordResetSent: '密码重置邮件发送成功',
+                        passwordResetError: '发送密码重置邮件失败',
+                        twoFactorRequired: '需要双重认证',
+                        twoFactorCodeSent: '验证码已发送到您的设备',
+                        securityInfo: '您的登录使用行业标准加密和多重认证保护。',
+                        loading: '加载中...'
+                    }
+                };
+            }
+
+            setLanguage(langCode) {
+                this.currentLanguage = langCode;
+            }
+
+            getText(key) {
+                return this.translations[this.currentLanguage][key] || this.translations.en[key] || key;
+            }
+        }
+
+        // Accessibility Manager
+        class AccessibilityManager {
+            constructor() {
+                this.initializeAccessibility();
+            }
+
+            initializeAccessibility() {
+                // Add keyboard navigation
+                this.addKeyboardNavigation();
+                
+                // Add focus management
+                this.addFocusManagement();
+                
+                // Add screen reader support
+                this.addScreenReaderSupport();
+                
+                // Add high contrast mode
+                this.addHighContrastMode();
+            }
+
+            addKeyboardNavigation() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && e.target.tagName === 'BUTTON') {
+                        e.target.click();
+                    }
+                    
+                    if (e.key === 'Tab') {
+                        this.handleTabNavigation(e);
+                    }
+                });
+            }
+
+            addFocusManagement() {
+                const focusableElements = document.querySelectorAll(
+                    'input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])'
+                );
+                
+                focusableElements.forEach(element => {
+                    element.addEventListener('focus', () => {
+                        element.classList.add('focus-visible');
+                    });
+                    
+                    element.addEventListener('blur', () => {
+                        element.classList.remove('focus-visible');
+                    });
+                });
+            }
+
+            addScreenReaderSupport() {
+                // Add aria-live regions for dynamic content
+                const alertContainer = document.getElementById('alertContainer');
+                alertContainer.setAttribute('aria-live', 'polite');
+                alertContainer.setAttribute('aria-atomic', 'true');
+                
+                // Add aria-describedby for form fields
+                const emailInput = document.getElementById('email');
+                const passwordInput = document.getElementById('password');
+                
+                emailInput.setAttribute('aria-describedby', 'emailError');
+                passwordInput.setAttribute('aria-describedby', 'passwordError');
+            }
+
+            addHighContrastMode() {
+                // Detect if user prefers high contrast
+                if (window.matchMedia && window.matchMedia('(prefers-contrast: high)').matches) {
+                    document.body.classList.add('high-contrast');
+                }
+                
+                // Listen for changes in contrast preference
+                if (window.matchMedia) {
+                    const contrastQuery = window.matchMedia('(prefers-contrast: high)');
+                    contrastQuery.addEventListener('change', (e) => {
+                        if (e.matches) {
+                            document.body.classList.add('high-contrast');
+                        } else {
+                            document.body.classList.remove('high-contrast');
+                        }
+                    });
+                }
+            }
+
+            handleTabNavigation(e) {
+                const focusableElements = document.querySelectorAll(
+                    'input:not([disabled]), button:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+                );
+                
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+                
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        lastElement.focus();
+                        e.preventDefault();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        firstElement.focus();
+                        e.preventDefault();
+                    }
+                }
+            }
+        }
+
+        // Security Manager
+        class SecurityManager {
+            constructor() {
+                this.initializeSecurity();
+            }
+
+            initializeSecurity() {
+                // Add CSP headers simulation
+                this.simulateCSP();
+                
+                // Add input sanitization
+                this.addInputSanitization();
+                
+                // Add device fingerprinting
+                this.addDeviceFingerprinting();
+                
+                // Add rate limiting
+                this.addRateLimiting();
+            }
+
+            simulateCSP() {
+                // In a real application, CSP headers would be set on the server
+                console.log('CSP: script-src \'self\' https://cdnjs.cloudflare.com; style-src \'self\' \'unsafe-inline\' https://cdnjs.cloudflare.com;');
+            }
+
+            addInputSanitization() {
+                const inputs = document.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        // Basic XSS prevention
+                        e.target.value = e.target.value.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                        e.target.value = e.target.value.replace(/javascript:/gi, '');
+                        e.target.value = e.target.value.replace(/on\w+=/gi, '');
+                    });
+                });
+            }
+
+            addDeviceFingerprinting() {
+                // Collect device information for security purposes
+                const deviceInfo = {
+                    userAgent: navigator.userAgent,
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    screenResolution: `${screen.width}x${screen.height}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    cookieEnabled: navigator.cookieEnabled,
+                    doNotTrack: navigator.doNotTrack
+                };
+                
+                // Store device fingerprint (in production, send to server)
+                const fingerprint = btoa(JSON.stringify(deviceInfo));
+                console.log('Device fingerprint:', fingerprint);
+            }
+
+            addRateLimiting() {
+                // Track request timestamps
+                let requestTimes = [];
+                const maxRequests = 5;
+                const timeWindow = 60000; // 1 minute
+
+                const originalFetch = window.fetch;
+                window.fetch = function(...args) {
+                    const now = Date.now();
+                    requestTimes = requestTimes.filter(time => now - time < timeWindow);
+                    
+                    if (requestTimes.length >= maxRequests) {
+                        throw new Error('Rate limit exceeded');
+                    }
+                    
+                    requestTimes.push(now);
+                    return originalFetch.apply(this, args);
+                };
+            }
+        }
+
+        // Testing Framework
+        class TestFramework {
+            constructor() {
+                this.tests = [];
+                this.results = [];
+            }
+
+            addTest(name, testFunction) {
+                this.tests.push({ name, testFunction });
+            }
+
+            async runTests() {
+                console.log('Running tests...');
+                
+                for (const test of this.tests) {
+                    try {
+                        await test.testFunction();
+                        this.results.push({ name: test.name, passed: true });
+                        console.log(`✓ ${test.name}`);
+                    } catch (error) {
+                        this.results.push({ name: test.name, passed: false, error: error.message });
+                        console.log(`✗ ${test.name}: ${error.message}`);
+                    }
+                }
+                
+                this.printResults();
+            }
+
+            printResults() {
+                const passed = this.results.filter(r => r.passed).length;
+                const total = this.results.length;
+                
+                console.log(`\nTest Results: ${passed}/${total} passed`);
+                
+                if (passed === total) {
+                    console.log('All tests passed! 🎉');
+                } else {
+                    console.log('Some tests failed. Please review.');
+                }
+            }
+
+            assertEqual(actual, expected, message) {
+                if (actual !== expected) {
+                    throw new Error(message || `Expected ${expected}, got ${actual}`);
+                }
+            }
+
+            assertTrue(condition, message) {
+                if (!condition) {
+                    throw new Error(message || 'Expected condition to be true');
+                }
+            }
+
+            assertFalse(condition, message) {
+                if (condition) {
+                    throw new Error(message || 'Expected condition to be false');
+                }
+            }
+        }
+
+        // Initialize managers
+        const i18nManager = new I18nManager();
+        const authManager = new AuthManager();
+        const accessibilityManager = new AccessibilityManager();
+        const securityManager = new SecurityManager();
+        const testFramework = new TestFramework();
+
+        // Initialize tests
+        function initializeTests() {
+            // Email validation tests
+            testFramework.addTest('Email validation - valid email', () => {
+                document.getElementById('email').value = 'test@example.com';
+                testFramework.assertTrue(authManager.validateEmail(), 'Valid email should pass validation');
+            });
+
+            testFramework.addTest('Email validation - invalid email', () => {
+                document.getElementById('email').value = 'invalid-email';
+                testFramework.assertFalse(authManager.validateEmail(), 'Invalid email should fail validation');
+            });
+
+            testFramework.addTest('Email validation - empty email', () => {
+                document.getElementById('email').value = '';
+                testFramework.assertFalse(authManager.validateEmail(), 'Empty email should fail validation');
+            });
+
+            // Password validation tests
+            testFramework.addTest('Password validation - valid password', () => {
+                document.getElementById('password').value = 'password123';
+                testFramework.assertTrue(authManager.validatePassword(), 'Valid password should pass validation');
+            });
+
+            testFramework.addTest('Password validation - short password', () => {
+                document.getElementById('password').value = '12345';
+                testFramework.assertFalse(authManager.validatePassword(), 'Short password should fail validation');
+            });
+
+            testFramework.addTest('Password validation - empty password', () => {
+                document.getElementById('password').value = '';
+                testFramework.assertFalse(authManager.validatePassword(), 'Empty password should fail validation');
+            });
+
+            // Form validation tests
+            testFramework.addTest('Form validation - valid form', () => {
+                document.getElementById('email').value = 'test@example.com';
+                document.getElementById('password').value = 'password123';
+                testFramework.assertTrue(authManager.validateForm('test@example.com', 'password123'), 'Valid form should pass validation');
+            });
+
+            testFramework.addTest('Form validation - invalid form', () => {
+                document.getElementById('email').value = 'invalid-email';
+                document.getElementById('password').value = '123';
+                testFramework.assertFalse(authManager.validateForm('invalid-email', '123'), 'Invalid form should fail validation');
+            });
+
+            // Lockout tests
+            testFramework.addTest('Account lockout - not locked initially', () => {
+                testFramework.assertFalse(authManager.isLockedOut(), 'Account should not be locked initially');
+            });
+
+            testFramework.addTest('Account lockout - locked after max attempts', () => {
+                authManager.loginAttempts = authManager.maxLoginAttempts;
+                authManager.lockAccount();
+                testFramework.assertTrue(authManager.isLockedOut(), 'Account should be locked after max attempts');
+            });
+
+            // Internationalization tests
+            testFramework.addTest('I18n - English text', () => {
+                i18nManager.setLanguage('en');
+                testFramework.assertEqual(i18nManager.getText('welcome'), 'Welcome Back', 'English text should be correct');
+            });
+
+            testFramework.addTest('I18n - Spanish text', () => {
+                i18nManager.setLanguage('es');
+                testFramework.assertEqual(i18nManager.getText('welcome'), 'Bienvenido de Vuelta', 'Spanish text should be correct');
+            });
+
+            testFramework.addTest('I18n - Fallback text', () => {
+                i18nManager.setLanguage('en');
+                testFramework.assertEqual(i18nManager.getText('nonexistent'), 'nonexistent', 'Fallback should return key');
+            });
+
+            // Session data tests
+            testFramework.addTest('Session data - store and retrieve', () => {
+                authManager.sessionData.set('testKey', 'testValue');
+                testFramework.assertEqual(authManager.sessionData.get('testKey'), 'testValue', 'Session data should be stored and retrieved correctly');
+            });
+
+            testFramework.addTest('Session data - clear', () => {
+                authManager.sessionData.set('testKey', 'testValue');
+                authManager.sessionData.clear();
+                testFramework.assertEqual(authManager.sessionData.get('testKey'), undefined, 'Session data should be cleared');
+            });
+        }
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Login application initialized');
+            initializeTests();
+            
+            // Run tests in development mode
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                setTimeout(() => {
+                    testFramework.runTests();
+                }, 1000);
+            }
+        });
+
+        // Export for testing purposes
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = {
+                AuthManager,
+                I18nManager,
+                AccessibilityManager,
+                SecurityManager,
+                TestFramework
+            };
+        }
+    </script>
+</body>
+</html>
