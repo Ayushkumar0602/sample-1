@@ -1,0 +1,915 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Results</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics-compat.js"></script>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --secondary-color: #607d8b;
+            --accent-color: #ff9800;
+            --success-color: #4caf50;
+            --warning-color: #ffc107;
+            --danger-color: #f44336;
+            --light-bg: #f5f7fa;
+            --dark-text: #263238;
+            --light-text: #f5f7fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .results-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .question-card {
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .question-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .score-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+        }
+        
+        .score-excellent {
+            background-color: var(--success-color);
+        }
+        
+        .score-good {
+            background-color: #8bc34a;
+        }
+        
+        .score-average {
+            background-color: var(--warning-color);
+        }
+        
+        .score-poor {
+            background-color: var(--danger-color);
+        }
+        
+        .feedback-section {
+            background-color: #f0f4f8;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .dimension-score {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .strength-item {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+        
+        .improvement-item {
+            color: var(--danger-color);
+            font-weight: 500;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+        
+        .action-button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .feedback-comment {
+            resize: none;
+            height: 100px;
+        }
+        
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        .focusable:focus {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .question-card {
+                transition: none;
+            }
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body {
+                background-color: white;
+                font-size: 12pt;
+            }
+            
+            .results-container {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4">Interview Results</h1>
+                    <p class="lead" id="interview-title">Review your performance and feedback</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <span class="badge bg-light text-primary fs-5" id="overall-score-badge">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Overall Summary Section -->
+        <section class="results-container mb-4" aria-labelledby="overall-summary-heading">
+            <h2 id="overall-summary-heading" class="h4 mb-3">Overall Summary</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h5 card-title">Performance Breakdown</h3>
+                            <div class="chart-container">
+                                <canvas id="performanceChart" aria-label="Performance breakdown by category"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="h5 card-title">Key Takeaways</h3>
+                            <div id="summary-feedback">
+                                <p>Loading feedback summary...</p>
+                            </div>
+                            <div class="mt-3">
+                                <h4 class="h6">Strengths</h4>
+                                <ul id="strengths-list">
+                                    <li>Loading...</li>
+                                </ul>
+                            </div>
+                            <div class="mt-3">
+                                <h4 class="h6">Areas for Improvement</h4>
+                                <ul id="improvements-list">
+                                    <li>Loading...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Questions Section -->
+        <section class="results-container mb-4" aria-labelledby="detailed-results-heading">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 id="detailed-results-heading" class="h4 mb-0">Detailed Results</h2>
+                <div>
+                    <button id="print-btn" class="btn btn-outline-primary btn-sm action-button no-print focusable">
+                        <i class="bi bi-printer"></i> Print
+                    </button>
+                    <button id="pdf-btn" class="btn btn-outline-primary btn-sm action-button no-print focusable">
+                        <i class="bi bi-file-earmark-pdf"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+            <div id="questions-container">
+                <!-- Questions will be dynamically inserted here -->
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Loading interview questions...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feedback Form Section -->
+        <section class="results-container mb-4 no-print" aria-labelledby="feedback-form-heading">
+            <h2 id="feedback-form-heading" class="h4 mb-3">Your Feedback</h2>
+            <p>We'd love to hear your thoughts about this interview experience and the feedback provided.</p>
+            <form id="feedback-form">
+                <div class="mb-3">
+                    <label for="feedback-rating" class="form-label">How helpful was the AI feedback?</label>
+                    <select class="form-select" id="feedback-rating" required>
+                        <option value="" selected disabled>Select a rating</option>
+                        <option value="5">Extremely helpful</option>
+                        <option value="4">Very helpful</option>
+                        <option value="3">Somewhat helpful</option>
+                        <option value="2">Slightly helpful</option>
+                        <option value="1">Not helpful at all</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="feedback-comment" class="form-label">Additional comments</label>
+                    <textarea class="form-control feedback-comment focusable" id="feedback-comment" placeholder="What did you like or dislike about the feedback? How could we improve?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary focusable">Submit Feedback</button>
+            </form>
+        </section>
+
+        <!-- Sharing Section -->
+        <section class="results-container no-print" aria-labelledby="share-results-heading">
+            <h2 id="share-results-heading" class="h4 mb-3">Share Your Results</h2>
+            <p>Celebrate your achievements or share for feedback (only scores and anonymized data will be shared).</p>
+            <div class="btn-group" role="group" aria-label="Sharing options">
+                <button id="share-twitter" class="btn btn-outline-info action-button focusable">
+                    <i class="bi bi-twitter"></i> Twitter
+                </button>
+                <button id="share-linkedin" class="btn btn-outline-info action-button focusable">
+                    <i class="bi bi-linkedin"></i> LinkedIn
+                </button>
+                <button id="share-email" class="btn btn-outline-info action-button focusable">
+                    <i class="bi bi-envelope"></i> Email
+                </button>
+                <button id="copy-link" class="btn btn-outline-secondary action-button focusable">
+                    <i class="bi bi-link-45deg"></i> Copy Link
+                </button>
+            </div>
+            <div class="form-check mt-3">
+                <input class="form-check-input focusable" type="checkbox" id="share-anonymously" checked>
+                <label class="form-check-label" for="share-anonymously">
+                    Share anonymously (hide personal information)
+                </label>
+            </div>
+        </section>
+    </div>
+
+    <footer class="bg-light py-4 mt-4 no-print">
+        <div class="container text-center">
+            <p class="mb-0">© 2023 Interview Prep Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modal for sharing -->
+    <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shareModalLabel">Share Your Results</h5>
+                    <button type="button" class="btn-close focusable" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="share-modal-message">Loading share options...</p>
+                    <div class="input-group mt-3" id="share-link-container" style="display: none;">
+                        <input type="text" class="form-control focusable" id="share-link-input" readonly>
+                        <button class="btn btn-outline-secondary focusable" type="button" id="copy-link-btn">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary focusable" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast for notifications -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="toast-notification" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toast-title">Notification</strong>
+                <button type="button" class="btn-close focusable" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message">
+                Operation completed successfully.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVYdfql5aqHrChlA1v3nxRLkIbYyWMvUg",
+            authDomain: "study2-7bdc7.firebaseapp.com",
+            databaseURL: "https://study2-7bdc7-default-rtdb.firebaseio.com",
+            projectId: "study2-7bdc7",
+            storageBucket: "study2-7bdc7.firebasestorage.app",
+            messagingSenderId: "320617984870",
+            appId: "1:320617984870:web:04b61ea4ee88ae057e4ea7",
+            measurementId: "G-VRM14GRNWG"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const analytics = firebase.analytics();
+
+        // Initialize Bootstrap components
+        const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
+        const toastEl = document.getElementById('toast-notification');
+        const toast = bootstrap.Toast ? new bootstrap.Toast(toastEl) : {
+            show: () => toastEl.classList.add('show'),
+            hide: () => toastEl.classList.remove('show')
+        };
+
+        // Global variables
+        let currentUser = null;
+        let interviewData = null;
+        let questionsData = [];
+        let interviewId = null;
+
+        // DOM elements
+        const questionsContainer = document.getElementById('questions-container');
+        const overallScoreBadge = document.getElementById('overall-score-badge');
+        const summaryFeedback = document.getElementById('summary-feedback');
+        const strengthsList = document.getElementById('strengths-list');
+        const improvementsList = document.getElementById('improvements-list');
+        const feedbackForm = document.getElementById('feedback-form');
+        const printBtn = document.getElementById('print-btn');
+        const pdfBtn = document.getElementById('pdf-btn');
+        const shareTwitterBtn = document.getElementById('share-twitter');
+        const shareLinkedinBtn = document.getElementById('share-linkedin');
+        const shareEmailBtn = document.getElementById('share-email');
+        const copyLinkBtn = document.getElementById('copy-link');
+        const shareLinkInput = document.getElementById('share-link-input');
+        const copyLinkBtnModal = document.getElementById('copy-link-btn');
+        const shareModalMessage = document.getElementById('share-modal-message');
+        const shareLinkContainer = document.getElementById('share-link-container');
+        const shareAnonymously = document.getElementById('share-anonymously');
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    analytics.setUserId(user.uid);
+                    analytics.logEvent('interview_results_page_view');
+                    
+                    // Get interview ID from URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    interviewId = urlParams.get('interviewId');
+                    
+                    if (!interviewId) {
+                        showToast('Error', 'No interview ID provided in the URL.', 'danger');
+                        return;
+                    }
+                    
+                    loadInterviewData();
+                } else {
+                    // User is not authenticated, redirect to login
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+
+        // Function to load interview data from Firestore
+        async function loadInterviewData() {
+            try {
+                // Get interview document
+                const interviewDoc = await db.collection('users')
+                    .doc(currentUser.uid)
+                    .collection('interviews')
+                    .doc(interviewId)
+                    .get();
+                
+                if (!interviewDoc.exists) {
+                    showToast('Error', 'Interview not found.', 'danger');
+                    return;
+                }
+                
+                interviewData = interviewDoc.data();
+                document.getElementById('interview-title').textContent = interviewData.interviewTitle || 'Interview Results';
+                
+                // Update overall score
+                updateOverallScore(interviewData.overallScore);
+                
+                // Load questions subcollection
+                const questionsSnapshot = await db.collection('users')
+                    .doc(currentUser.uid)
+                    .collection('interviews')
+                    .doc(interviewId)
+                    .collection('questions')
+                    .orderBy('questionNumber')
+                    .get();
+                
+                questionsData = questionsSnapshot.docs.map(doc => doc.data());
+                
+                // Render questions
+                renderQuestions();
+                
+                // Update summary sections
+                updateSummaryFeedback();
+                updateStrengthsAndImprovements();
+                
+                // Initialize chart
+                initializePerformanceChart();
+                
+                // Log analytics event
+                analytics.logEvent('interview_data_loaded', {
+                    interview_id: interviewId,
+                    question_count: questionsData.length
+                });
+                
+            } catch (error) {
+                console.error('Error loading interview data:', error);
+                showToast('Error', 'Failed to load interview data.', 'danger');
+            }
+        }
+
+        // Function to update overall score display
+        function updateOverallScore(score) {
+            if (score === undefined || score === null) {
+                overallScoreBadge.textContent = 'N/A';
+                overallScoreBadge.className = 'badge bg-light text-primary fs-5';
+                return;
+            }
+            
+            overallScoreBadge.textContent = `${Math.round(score)}%`;
+            
+            // Set badge color based on score
+            if (score >= 80) {
+                overallScoreBadge.className = 'badge bg-success text-white fs-5';
+            } else if (score >= 60) {
+                overallScoreBadge.className = 'badge bg-primary text-white fs-5';
+            } else if (score >= 40) {
+                overallScoreBadge.className = 'badge bg-warning text-dark fs-5';
+            } else {
+                overallScoreBadge.className = 'badge bg-danger text-white fs-5';
+            }
+        }
+
+        // Function to render questions
+        function renderQuestions() {
+            if (!questionsData || questionsData.length === 0) {
+                questionsContainer.innerHTML = '<div class="alert alert-info">No questions found for this interview.</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            questionsData.forEach((question, index) => {
+                const questionNumber = index + 1;
+                const score = question.score !== undefined ? Math.round(question.score) : 'N/A';
+                const scoreClass = getScoreClass(question.score);
+                
+                html += `
+                <div class="question-card" id="question-${questionNumber}">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h3 class="h5 mb-0">Question ${questionNumber}: ${question.questionText || 'No question text available.'}</h3>
+                        <span class="badge ${scoreClass} score-badge">Score: ${score}%</span>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <p class="mb-1"><strong>Your Answer:</strong></p>
+                        <p class="ps-3">${question.userAnswer || 'No answer provided.'}</p>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <p class="mb-1"><strong>Expected Answer:</strong></p>
+                        <p class="ps-3">${question.expectedAnswer || 'No expected answer provided.'}</p>
+                    </div>
+                    
+                    <div class="feedback-section">
+                        <p class="mb-1"><strong>Feedback:</strong></p>
+                        <p>${question.feedback || 'No feedback available.'}</p>
+                        
+                        <div class="mt-3">
+                            <p class="mb-2"><strong>Evaluation Rubric:</strong></p>
+                            <div class="row">
+                                ${renderDimensionScores(question.dimensions)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+            
+            questionsContainer.innerHTML = html;
+            
+            // Add event listeners for accessibility
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.setAttribute('tabindex', '0');
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        card.click();
+                    }
+                });
+            });
+        }
+
+        // Helper function to get CSS class based on score
+        function getScoreClass(score) {
+            if (score === undefined || score === null) return 'bg-secondary';
+            if (score >= 80) return 'score-excellent';
+            if (score >= 60) return 'score-good';
+            if (score >= 40) return 'score-average';
+            return 'score-poor';
+        }
+
+        // Helper function to render dimension scores
+        function renderDimensionScores(dimensions) {
+            if (!dimensions || Object.keys(dimensions).length === 0) {
+                return '<div class="col-12"><p>No detailed evaluation available.</p></div>';
+            }
+            
+            let html = '';
+            
+            Object.entries(dimensions).forEach(([dimension, value]) => {
+                const score = value.score !== undefined ? Math.round(value.score) : 'N/A';
+                const scoreClass = getScoreClass(value.score);
+                
+                html += `
+                <div class="col-md-6 col-lg-4 mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>${dimension}:</span>
+                        <span class="dimension-score ${scoreClass}">${score}%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar ${scoreClass}" role="progressbar" style="width: ${value.score || 0}%" 
+                             aria-valuenow="${value.score || 0}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <p class="small text-muted mt-1">${value.comments || ''}</p>
+                </div>
+                `;
+            });
+            
+            return html;
+        }
+
+        // Function to update summary feedback
+        function updateSummaryFeedback() {
+            if (!interviewData || !interviewData.summaryFeedback) {
+                summaryFeedback.innerHTML = '<p>No summary feedback available.</p>';
+                return;
+            }
+            
+            summaryFeedback.innerHTML = `<p>${interviewData.summaryFeedback}</p>`;
+        }
+
+        // Function to update strengths and improvements
+        function updateStrengthsAndImprovements() {
+            if (!interviewData) {
+                strengthsList.innerHTML = '<li>No data available</li>';
+                improvementsList.innerHTML = '<li>No data available</li>';
+                return;
+            }
+            
+            // Clear existing content
+            strengthsList.innerHTML = '';
+            improvementsList.innerHTML = '';
+            
+            // Add strengths
+            if (interviewData.strengths && interviewData.strengths.length > 0) {
+                interviewData.strengths.forEach(strength => {
+                    const li = document.createElement('li');
+                    li.className = 'strength-item';
+                    li.textContent = strength;
+                    strengthsList.appendChild(li);
+                });
+            } else {
+                strengthsList.innerHTML = '<li>No strengths identified</li>';
+            }
+            
+            // Add improvements
+            if (interviewData.improvements && interviewData.improvements.length > 0) {
+                interviewData.improvements.forEach(improvement => {
+                    const li = document.createElement('li');
+                    li.className = 'improvement-item';
+                    li.textContent = improvement;
+                    improvementsList.appendChild(li);
+                });
+            } else {
+                improvementsList.innerHTML = '<li>No improvements suggested</li>';
+            }
+        }
+
+        // Function to initialize performance chart
+        function initializePerformanceChart() {
+            if (!questionsData || questionsData.length === 0) return;
+            
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            // Aggregate dimension scores
+            const dimensionMap = {};
+            let dimensionCount = 0;
+            
+            questionsData.forEach(question => {
+                if (question.dimensions) {
+                    Object.entries(question.dimensions).forEach(([dimension, value]) => {
+                        if (!dimensionMap[dimension]) {
+                            dimensionMap[dimension] = {
+                                sum: 0,
+                                count: 0
+                            };
+                        }
+                        dimensionMap[dimension].sum += value.score || 0;
+                        dimensionMap[dimension].count++;
+                    });
+                }
+            });
+            
+            const dimensions = Object.keys(dimensionMap);
+            const avgScores = dimensions.map(dim => Math.round(dimensionMap[dim].sum / dimensionMap[dim].count));
+            
+            // If we have dimension data, show that, otherwise show question scores
+            if (dimensions.length > 0) {
+                const backgroundColors = [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(75, 192, 192, 0.6)'
+                ];
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: dimensions,
+                        datasets: [{
+                            label: 'Average Score (%)',
+                            data: avgScores,
+                            backgroundColor: backgroundColors.slice(0, dimensions.length),
+                            borderColor: backgroundColors.map(c => c.replace('0.6', '1')),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Score (%)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Average: ${context.raw}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                // Fallback to question scores if no dimensions
+                const questionNumbers = questionsData.map((_, i) => `Q${i+1}`);
+                const questionScores = questionsData.map(q => Math.round(q.score || 0));
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: questionNumbers,
+                        datasets: [{
+                            label: 'Question Score (%)',
+                            data: questionScores,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Score (%)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Event listener for feedback form submission
+        feedbackForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const rating = document.getElementById('feedback-rating').value;
+            const comment = document.getElementById('feedback-comment').value;
+            
+            try {
+                await db.collection('users')
+                    .doc(currentUser.uid)
+                    .collection('interviews')
+                    .doc(interviewId)
+                    .collection('feedback')
+                    .add({
+                        rating: parseInt(rating),
+                        comment: comment,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                
+                showToast('Success', 'Thank you for your feedback!', 'success');
+                feedbackForm.reset();
+                
+                // Log analytics event
+                analytics.logEvent('feedback_submitted', {
+                    interview_id: interviewId,
+                    rating: rating
+                });
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                showToast('Error', 'Failed to submit feedback.', 'danger');
+            }
+        });
+
+        // Event listener for print button
+        printBtn.addEventListener('click', () => {
+            window.print();
+            
+            // Log analytics event
+            analytics.logEvent('print_results', {
+                interview_id: interviewId
+            });
+        });
+
+        // Event listener for PDF button
+        pdfBtn.addEventListener('click', () => {
+            generatePDF();
+            
+            // Log analytics event
+            analytics.logEvent('download_pdf', {
+                interview_id: interviewId
+            });
+        });
+
+        // Function to generate PDF (using jsPDF)
+        function generatePDF() {
+            // You would need to properly implement this with jsPDF
+            // This is a simplified version
+            showToast('Info', 'PDF generation would be implemented here with jsPDF library.', 'info');
+            
+            // For a real implementation:
+            /*
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add content to the PDF
+            doc.text('Interview Results', 10, 10);
+            doc.text(`Interview Title: ${interviewData.interviewTitle || 'N/A'}`, 10, 20);
+            doc.text(`Overall Score: ${interviewData.overallScore || 'N/A'}%`, 10, 30);
+            
+            // Save the PDF
+            doc.save(`InterviewResults_${interviewId}.pdf`);
+            */
+        }
+
+        // Event listeners for sharing buttons
+        shareTwitterBtn.addEventListener('click', () => shareResults('twitter'));
+        shareLinkedinBtn.addEventListener('click', () => shareResults('linkedin'));
+        shareEmailBtn.addEventListener('click', () => shareResults('email'));
+        copyLinkBtn.addEventListener('click', () => shareResults('copy'));
+
+        // Function to handle sharing
+        function shareResults(platform) {
+            const shareUrl = `${window.location.origin}${window.location.pathname}?interviewId=${interviewId}`;
+            const text = `I completed an interview practice session and scored ${interviewData.overallScore || 'N/A'}%! Check out my results.`;
+            
+            shareModalMessage.textContent = '';
+            shareLinkContainer.style.display = 'none';
+            
+            switch (platform) {
+                case 'twitter':
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+                    shareModalMessage.textContent = 'Sharing to Twitter in a new window...';
+                    break;
+                case 'linkedin':
+                    window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent('My Interview Results')}&summary=${encodeURIComponent(text)}`, '_blank');
+                    shareModalMessage.textContent = 'Sharing to LinkedIn in a new window...';
+                    break;
+                case 'email':
+                    window.open(`mailto:?subject=My Interview Results&body=${encodeURIComponent(`${text}\n\nView detailed results: ${shareUrl}`)}`);
+                    shareModalMessage.textContent = 'Opening email client to share results...';
+                    break;
+                case 'copy':
+                    shareLinkInput.value = shareUrl;
+                    shareModalMessage.textContent = 'Copy this link to share your interview results:';
+                    shareLinkContainer.style.display = 'flex';
+                    break;
+            }
+            
+            shareModal.show();
+            
+            // Log analytics event
+            analytics.logEvent('share_results', {
+                interview_id: interviewId,
+                platform: platform
+            });
+        }
+
+        // Event listener for copying link in modal
+        copyLinkBtnModal.addEventListener('click', () => {
+            shareLinkInput.select();
+            document.execCommand('copy');
+            showToast('Success', 'Link copied to clipboard!', 'success');
+        });
+
+        // Function to show toast notifications
+        function showToast(title, message, type = 'info') {
+            document.getElementById('toast-title').textContent = title;
+            document.getElementById('toast-message').textContent = message;
+            
+            // Set appropriate background color
+            const toastHeader = toastEl.querySelector('.toast-header');
+            toastHeader.className = 'toast-header';
+            
+            switch (type) {
+                case 'success':
+                    toastHeader.classList.add('bg-success', 'text-white');
+                    break;
+                case 'danger':
+                    toastHeader.classList.add('bg-danger', 'text-white');
+                    break;
+                case 'warning':
+                    toastHeader.classList.add('bg-warning', 'text-dark');
+                    break;
+                default:
+                    toastHeader.classList.add('bg-info', 'text-white');
+            }
+            
+            toast.show();
+        }
+
+        // Add event listeners for accessibility
+        document.addEventListener('keydown', (e) => {
+            // Close toast with Escape key
+            if (e.key === 'Escape' && toastEl.classList.contains('show')) {
+                toast.hide();
+            }
+        });
+    </script>
+</body>
+</html>
