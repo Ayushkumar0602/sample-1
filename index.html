@@ -1,1216 +1,990 @@
-<!-- Here's a complete, production-ready landing page for the AI Interview App with all the requested features:
-
-```html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI Interview App helps you practice and improve your interview skills with intelligent feedback and mock interviews.">
-    <meta name="keywords" content="interview practice, job interview, career development, AI mock interview, job preparation">
-    <title>AI Interview App - Master Your Next Job Interview</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics-compat.js"></script>
-    
-    <!-- reCAPTCHA -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    
+    <title>AI Interview Assistant - Expert Interview Preparation with AI | AIInterview</title>
+    <meta name="description" content="Prepare for job interviews with our AI-powered platform. Get realistic practice, instant feedback, and personalized coaching to ace your next interview.">
+    <meta name="keywords" content="AI interview, interview preparation, job interview practice, interview coaching, career development">
+    <meta name="author" content="AIInterview">
+    <meta property="og:title" content="AI Interview Assistant - Ace Your Interviews with AI">
+    <meta property="og:description" content="Prepare for success with our AI-powered interview platform.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.aiinterview.com">
+    <meta property="og:image" content="https://www.aiinterview.com/images/og-image.jpg">
+    <link rel="canonical" href="https://www.aiinterview.com">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4cc9f0;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --success-color: #4bb543;
-            --warning-color: #f0ad4e;
-            --danger-color: #d9534f;
-            --transition: all 0.3s ease-in-out;
+            --primary-color: #7e57c2;
+            --primary-dark: #5e35b1;
+            --primary-light: #b388ff;
+            --secondary-color: #ffa000;
+            --accent-color: #ffc107;
+            --text-color: #2d3436;
+            --light-bg: #f5f3ff;
+            --white: #ffffff;
+            --dark: #1a237e;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 14px 28px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.1);
         }
-        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            src: url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark-color);
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--light-bg);
             overflow-x: hidden;
-            line-height: 1.6;
         }
-        
+
+        ::selection {
+            background-color: var(--primary-light);
+            color: var(--white);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            color: var(--secondary-color);
+            font-size: 2rem;
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 8px 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+            border-radius: 3px;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-dark);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1rem;
+            border: none;
+            box-shadow: var(--shadow-sm);
+        }
+
         .btn-primary {
             background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            transition: var(--transition);
+            color: var(--white);
+            border: 2px solid var(--primary-color);
         }
-        
+
         .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
+            background-color: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-md);
         }
-        
-        .btn-outline-primary {
+
+        .btn-outline {
+            background-color: transparent;
             color: var(--primary-color);
-            border-color: var(--primary-color);
+            border: 2px solid var(--primary-color);
         }
-        
-        .btn-outline-primary:hover {
+
+        .btn-outline:hover {
             background-color: var(--primary-color);
-            border-color: var(--primary-color);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
-        
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.8rem;
-        }
-        
-        .navbar {
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .navbar-dark .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .navbar-dark .navbar-nav .nav-link:hover {
-            color: #fff;
-        }
-        
+
         .hero {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 5rem 0;
+            padding: 180px 0 100px;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
-        
+
         .hero::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -50%;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            transform: rotate(30deg);
+            height: 100%;
+            background: linear-gradient(135deg, rgba(126, 87, 194, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: -1;
         }
-        
+
         .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
             position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+            color: var(--dark);
+            animation: fadeInUp 1s ease-out;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: var(--text-color);
+            opacity: 0.9;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 2s ease-out;
+        }
+
+        .hero .btn {
+            padding: 16px 32px;
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .spline-container {
+            height: 500px;
+            width: 100%;
+            margin: 40px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .spline-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(30, 27, 75, 0.8), transparent);
+            padding: 30px;
+            color: white;
+            z-index: 2;
+        }
+
+        .spline-overlay h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .features {
+            padding: 100px 0;
+            background-color: var(--white);
+            position: relative;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to right, var(--primary-light), var(--secondary-color));
+            clip-path: polygon(0 100%, 100% 100%, 100% 0);
+            opacity: 0.1;
             z-index: 1;
         }
-        
-        .hero-title {
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            font-size: 3rem;
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+            z-index: 2;
         }
-        
-        .hero-subtitle {
-            font-weight: 300;
-            margin-bottom: 2rem;
-            font-size: 1.5rem;
-            opacity: 0.9;
-        }
-        
-        .feature-card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-            height: 100%;
-            padding: 2rem;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-        }
-        
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        .section {
-            padding: 5rem 0;
-        }
-        
-        .section-title {
-            font-weight: 700;
-            margin-bottom: 3rem;
+
+        .section-header h2 {
+            font-size: 2.8rem;
+            color: var(--dark);
+            margin-bottom: 16px;
             position: relative;
             display: inline-block;
         }
-        
-        .section-title::after {
+
+        .section-header h2::after {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: var(--primary-color);
-            border-radius: 3px;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
         }
-        
-        .testimonial-card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin: 1rem;
+
+        .section-header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .feature-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card {
+            background-color: var(--white);
+            padding: 40px 30px;
+            border-radius: 16px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(126, 87, 194, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
             transition: var(--transition);
         }
-        
-        .testimonial-card:hover {
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+
+        .feature-card:hover::before {
+            height: 100%;
         }
-        
-        .testimonial-text {
-            font-style: italic;
-            margin-bottom: 1.5rem;
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 24px;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            color: var(--secondary-color);
+        }
+
+        .feature-card h3 {
+            margin-bottom: 16px;
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .tech-stack {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--light-bg) 0%, var(--white) 100%);
+        }
+
+        .tech-icons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .tech-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            width: 120px;
+            padding: 30px 20px;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .tech-icon:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .tech-icon i {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+        }
+
+        .tech-icon span {
+            font-weight: 500;
+        }
+
+        .testimonials {
+            padding: 100px 0;
+            background-color: var(--white);
+        }
+
+        .testimonial-slider {
+            max-width: 800px;
+            margin: 0 auto;
             position: relative;
         }
-        
-        .testimonial-text::before {
-            content: '"';
-            font-size: 4rem;
-            color: rgba(0, 0, 0, 0.1);
-            position: absolute;
-            top: -20px;
-            left: -15px;
-            line-height: 1;
+
+        .testimonial {
+            background: var(--light-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            margin: 20px;
+            text-align: center;
         }
-        
+
+        .testimonial-content {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 24px;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .testimonial-content::before,
+        .testimonial-content::after {
+            content: '"';
+            font-size: 2rem;
+            color: var(--primary-light);
+            line-height: 0;
+            vertical-align: middle;
+        }
+
+        .testimonial-content::before {
+            margin-right: 8px;
+        }
+
+        .testimonial-content::after {
+            margin-left: 8px;
+        }
+
         .testimonial-author {
             display: flex;
             align-items: center;
+            justify-content: center;
+            gap: 16px;
         }
-        
-        .testimonial-author img {
-            width: 50px;
-            height: 50px;
+
+        .author-avatar {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             object-fit: cover;
-            margin-right: 1rem;
+            border: 3px solid var(--primary-light);
         }
-        
-        .contact-form {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
+
+        .author-info h4 {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 4px;
         }
-        
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+
+        .author-info p {
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
         }
-        
-        .footer {
-            background-color: var(--dark-color);
-            color: white;
-            padding: 3rem 0;
+
+        footer {
+            background: linear-gradient(135deg, var(--dark) 0%, #311b92 100%);
+            color: var(--white);
+            padding: 80px 0 30px;
+            position: relative;
         }
-        
-        .footer-link {
-            color: rgba(255, 255, 255, 0.7);
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 24px;
+            font-size: 1.3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        .footer-column p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: var(--white);
             text-decoration: none;
             transition: var(--transition);
+            opacity: 0.8;
+            display: inline-block;
         }
-        
-        .footer-link:hover {
-            color: white;
-            text-decoration: underline;
+
+        .footer-column a:hover {
+            opacity: 1;
+            color: var(--accent-color);
+            transform: translateX(5px);
         }
-        
-        .social-icon {
-            display: inline-flex;
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
             align-items: center;
             justify-content: center;
             width: 40px;
             height: 40px;
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            margin-right: 0.5rem;
             transition: var(--transition);
         }
-        
-        .social-icon:hover {
-            background-color: var(--primary-color);
-            color: white;
-            transform: translateY(-3px);
-        }
-        
-        .back-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            z-index: 999;
-        }
-        
-        .back-to-top.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .back-to-top:hover {
+
+        .social-links a:hover {
             background-color: var(--secondary-color);
             transform: translateY(-3px);
         }
-        
-        /* Animations */
-        .animate-fade-in {
-            animation: fadeIn 1s ease-in-out;
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
         }
-        
-        .animate-slide-up {
-            animation: slideUp 1s ease-in-out;
+
+        /* Spline Animation Container */
+        #spline-animation {
+            width: 100%;
+            height: 100%;
+            min-height: 500px;
+            background: transparent;
         }
-        
-        .animate-delay-1 {
-            animation-delay: 0.2s;
-        }
-        
-        .animate-delay-2 {
-            animation-delay: 0.4s;
-        }
-        
-        .animate-delay-3 {
-            animation-delay: 0.6s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Responsive adjustments */
+
         @media (max-width: 992px) {
-            .hero-title {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .section-header h2 {
+                font-size: 2.3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
                 font-size: 2.5rem;
             }
             
-            .hero-subtitle {
-                font-size: 1.25rem;
+            .hero-btns {
+                flex-direction: column;
+                width: 100%;
             }
             
-            .section {
-                padding: 3rem 0;
+            .hero .btn {
+                width: 100%;
+            }
+            
+            .spline-container {
+                height: 400px;
             }
         }
-        
-        @media (max-width: 768px) {
-            .hero-title {
+
+        @media (max-width: 576px) {
+            .hero {
+                padding: 140px 0 60px;
+            }
+            
+            .hero h1 {
                 font-size: 2rem;
             }
             
-            .navbar-brand {
-                font-size: 1.5rem;
-            }
-            
-            .hero {
-                padding: 3rem 0;
-            }
-            
-            .feature-card {
-                margin-bottom: 1.5rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .hero-title {
-                font-size: 1.75rem;
-            }
-            
-            .hero-subtitle {
+            .hero p {
                 font-size: 1.1rem;
             }
             
-            .section-title {
-                font-size: 1.5rem;
+            .feature-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .tech-icon {
+                width: 100px;
+                padding: 20px 15px;
             }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://unpkg.com/@splinetool/viewer@1.0.62/build/spline-viewer.js"></script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <header>
         <div class="container">
-            <a class="navbar-brand" href="#">AI Interviewer</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#how-it-works">How It Works</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#testimonials">Testimonials</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#pricing">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
-                    </li>
-                </ul>
-                <div class="ms-lg-3 mt-3 mt-lg-0">
-                    <a href="login.html" class="btn btn-outline-light me-2" >Login</a>
-                    <a href="signup.html" class="btn btn-light">Sign Up</a>
+            <nav>
+                <a href="index.html" class="logo">
+                    <i class="fas fa-robot logo-icon"></i>
+                    AI<span>Interview</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#tech-stack">Technology</a>
+                    <a href="#testimonials">Testimonials</a>
+                    <a href="#about">About</a>
                 </div>
-            </div>
+                <div class="cta-buttons">
+                    <a href="login.html" class="btn btn-outline">Login</a>
+                    <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                </div>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 hero-content animate-slide-up">
-                    <h1 class="hero-title">Ace Your Next Job Interview with AI</h1>
-                    <p class="hero-subtitle">Practice with our intelligent interview simulator and get personalized feedback to improve your performance.</p>
-                    <div class="d-flex gap-3">
-                        <a href="signup.html" class="btn btn-light btn-lg animate-delay-1">Get Started Free</a>
-                        <a href="#how-it-works" class="btn btn-outline-light btn-lg animate-delay-2">Learn More</a>
-                    </div>
-                </div>
-                <div class="col-lg-6 animate-slide-up animate-delay-1">
-                    <img src="https://via.placeholder.com/600x400" alt="AI Interview App" class="img-fluid rounded-3 shadow">
+            <div class="hero-content">
+                <h1>Transform Your Interview Skills with AI</h1>
+                <p>Master the art of interviewing with our intelligent platform that provides realistic practice, instant feedback, and personalized coaching to help you land your dream job.</p>
+                <div class="hero-btns">
+                    <a href="signup.html" class="btn btn-primary">Start Free Trial</a>
+                    <a href="#features" class="btn btn-outline">See How It Works</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features" class="section bg-light">
+    <div class="container">
+        <div class="spline-container">
+            <spline-viewer url="https://prod.spline.design/Br8ecKo35iElh8tu/scene.splinecode"></spline-viewer>
+            <div class="spline-overlay">
+                <h3>Experience the Future of Interview Prep</h3>
+                <p>Our AI analyzes your responses and body language for comprehensive feedback</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="features" id="features">
         <div class="container">
-            <h2 class="text-center section-title animate-fade-in">Key Features</h2>
-            <div class="row">
-                <div class="col-md-4 animate-slide-up">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <h3 class="feature-title">AI-Powered Mock Interviews</h3>
-                        <p>Practice with our advanced AI that simulates real interview scenarios across various industries and job levels.</p>
+            <div class="section-header">
+                <h2>Elevate Your Interview Game</h2>
+                <p>Our platform combines cutting-edge AI technology with expert interview techniques to give you the ultimate preparation experience</p>
+            </div>
+            <div class="feature-container">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-microphone-alt"></i>
                     </div>
+                    <h3>Voice Analysis</h3>
+                    <p>Get feedback on your tone, pace, and clarity to make the perfect impression.</p>
                 </div>
-                <div class="col-md-4 animate-slide-up animate-delay-1">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h3 class="feature-title">Performance Analytics</h3>
-                        <p>Get detailed feedback on your responses, including speech clarity, content relevance, and confidence level.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
                     </div>
+                    <h3>Performance Metrics</h3>
+                    <p>Track your progress with detailed analytics and improvement recommendations.</p>
                 </div>
-                <div class="col-md-4 animate-slide-up animate-delay-2">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <h3 class="feature-title">Personalized Coaching</h3>
-                        <p>Receive tailored recommendations to improve your interview skills based on your performance.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tshirt"></i>
                     </div>
+                    <h3>Appearance Check</h3>
+                    <p>Get suggestions on professional attire and presentation for video interviews.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h3>Industry-Specific</h3>
+                    <p>Customized questions and scenarios for your target industry and role.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Adaptive AI</h3>
+                    <p>Our system evolves based on your responses for increasingly challenging practice.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Time Management</h3>
+                    <p>Learn to structure your answers effectively within typical interview time limits.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="section">
+    <section class="tech-stack" id="tech-stack">
         <div class="container">
-            <h2 class="text-center section-title animate-fade-in">How It Works</h2>
-            <div class="row align-items-center mb-5">
-                <div class="col-lg-6 animate-slide-up">
-                    <img src="https://via.placeholder.com/500x350" alt="Step 1: Create Your Account" class="img-fluid rounded-3 shadow">
-                </div>
-                <div class="col-lg-6 animate-slide-up animate-delay-1">
-                    <h3>1. Create Your Account</h3>
-                    <p>Sign up in seconds with your email or social media account. Set up your profile with your industry, experience level, and job preferences.</p>
-                    <a href="signup.html" class="btn btn-primary">Get Started</a>
-                </div>
+            <div class="section-header">
+                <h2>Powered by Advanced Technology</h2>
+                <p>We leverage the latest innovations to deliver an unparalleled interview preparation experience</p>
             </div>
-            <div class="row align-items-center mb-5">
-                <div class="col-lg-6 order-lg-2 animate-slide-up">
-                    <img src="https://via.placeholder.com/500x350" alt="Step 2: Choose Interview Type" class="img-fluid rounded-3 shadow">
+            <div class="tech-icons">
+                <div class="tech-icon">
+                    <i class="fab fa-react"></i>
+                    <span>React</span>
                 </div>
-                <div class="col-lg-6 order-lg-1 animate-slide-up animate-delay-1">
-                    <h3>2. Choose Interview Type</h3>
-                    <p>Select from our library of interview types including behavioral, technical, case studies, and more tailored to your target job.</p>
+                <div class="tech-icon">
+                    <i class="fab fa-node-js"></i>
+                    <span>Node.js</span>
                 </div>
-            </div>
-            <div class="row align-items-center">
-                <div class="col-lg-6 animate-slide-up">
-                    <img src="https://via.placeholder.com/500x350" alt="Step 3: Practice & Improve" class="img-fluid rounded-3 shadow">
+                <div class="tech-icon">
+                    <i class="fas fa-database"></i>
+                    <span>MongoDB</span>
                 </div>
-                <div class="col-lg-6 animate-slide-up animate-delay-1">
-                    <h3>3. Practice & Improve</h3>
-                    <p>Conduct mock interviews and receive instant feedback on your responses, body language, and communication skills.</p>
+                <div class="tech-icon">
+                    <i class="fab fa-python"></i>
+                    <span>Python</span>
+                </div>
+                <div class="tech-icon">
+                    <i class="fas fa-brain"></i>
+                    <span>AI/ML</span>
+                </div>
+                <div class="tech-icon">
+                    <i class="fab fa-aws"></i>
+                    <span>AWS</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="section bg-light">
+    <section class="testimonials" id="testimonials">
         <div class="container">
-            <h2 class="text-center section-title animate-fade-in">What Our Users Say</h2>
-            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="testimonial-card">
-                                    <p class="testimonial-text">The AI Interview App completely transformed my interview skills. I went from struggling with nervous responses to confidently articulating my value proposition. The personalized feedback helped me identify my weak areas and improve rapidly.</p>
-                                    <div class="testimonial-author">
-                                        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Sarah J.">
-                                        <div>
-                                            <h5 class="mb-0">Sarah J.</h5>
-                                            <small>Product Manager at TechCo</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="section-header">
+                <h2>Success Stories</h2>
+                <p>Don't just take our word for it - hear from people who landed their dream jobs with our help</p>
+            </div>
+            <div class="testimonial-slider">
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        After practicing with AIInterview, I went into my Google interview with confidence. The feedback on my answers was invaluable - I knew exactly what to improve.
                     </div>
-                    <div class="carousel-item">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="testimonial-card">
-                                    <p class="testimonial-text">As someone transitioning careers, I was nervous about my interview skills. This app gave me the practice I needed to feel prepared. The technical interview simulations were particularly helpful for my software engineering interviews.</p>
-                                    <div class="testimonial-author">
-                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael T.">
-                                        <div>
-                                            <h5 class="mb-0">Michael T.</h5>
-                                            <small>Software Engineer</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="testimonial-card">
-                                    <p class="testimonial-text">I used this app to prepare for my MBA interviews and it made all the difference. The behavioral question bank was comprehensive and the AI feedback helped me refine my stories. I got into my dream school!</p>
-                                    <div class="testimonial-author">
-                                        <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="Priya K.">
-                                        <div>
-                                            <h5 class="mb-0">Priya K.</h5>
-                                            <small>MBA Candidate</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/43.jpg" alt="Sarah Johnson" class="author-avatar">
+                        <div class="author-info">
+                            <h4>Sarah Johnson</h4>
+                            <p>Product Manager at Google</p>
                         </div>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
             </div>
         </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section id="pricing" class="section">
+    <footer>
         <div class="container">
-            <h2 class="text-center section-title animate-fade-in">Simple, Transparent Pricing</h2>
-            <div class="row justify-content-center">
-                <div class="col-md-4 mb-4 mb-md-0 animate-slide-up">
-                    <div class="card h-100">
-                        <div class="card-body text-center py-4">
-                            <h3 class="card-title">Free</h3>
-                            <h4 class="display-6 fw-bold my-4">$0</h4>
-                            <p class="mx-5 text-muted d-none d-lg-block">Great way to get started</p>
-                            <ul class="list-unstyled my-4">
-                                <li class="mb-2">3 mock interviews/month</li>
-                                <li class="mb-2">Basic performance feedback</li>
-                                <li class="mb-2">5 interview question categories</li>
-                                <li class="mb-2">Email support</li>
-                            </ul>
-                            <a href="signup.html" class="btn btn-outline-primary">Get Started</a>
-                        </div>
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>AIInterview</h3>
+                    <p>Revolutionizing interview preparation with AI technology to help candidates showcase their best selves.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4 mb-md-0 animate-slide-up animate-delay-1">
-                    <div class="card h-100 border-primary">
-                        <div class="card-header bg-primary text-white text-center py-3">
-                            <span class="badge bg-white text-primary rounded-pill">Most Popular</span>
-                        </div>
-                        <div class="card-body text-center py-4">
-                            <h3 class="card-title">Pro</h3>
-                            <h4 class="display-6 fw-bold my-4">$19<span class="text-muted fs-6">/month</span></h4>
-                            <p class="mx-5 text-muted d-none d-lg-block">Best for serious job seekers</p>
-                            <ul class="list-unstyled my-4">
-                                <li class="mb-2">Unlimited mock interviews</li>
-                                <li class="mb-2">Advanced AI feedback</li>
-                                <li class="mb-2">15+ interview question categories</li>
-                                <li class="mb-2">Custom interview setups</li>
-                                <li class="mb-2">Priority support</li>
-                            </ul>
-                            <a href="signup.html" class="btn btn-primary">Subscribe Now</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 animate-slide-up animate-delay-2">
-                    <div class="card h-100">
-                        <div class="card-body text-center py-4">
-                            <h3 class="card-title">Enterprise</h3>
-                            <h4 class="display-6 fw-bold my-4">Custom</h4>
-                            <p class="mx-5 text-muted d-none d-lg-block">For teams and organizations</p>
-                            <ul class="list-unstyled my-4">
-                                <li class="mb-2">Everything in Pro</li>
-                                <li class="mb-2">Team dashboard</li>
-                                <li class="mb-2">Custom question banks</li>
-                                <li class="mb-2">Dedicated account manager</li>
-                                <li class="mb-2">API access</li>
-                                <li class="mb-2">Onboarding training</li>
-                            </ul>
-                            <a href="#contact" class="btn btn-outline-primary">Contact Us</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-5">
-                <p>Not sure which plan is right for you? <a href="#contact" class="text-primary">Contact our team</a> for personalized recommendations.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-5 bg-primary text-white">
-        <div class="container text-center animate-fade-in">
-            <h2 class="mb-4">Ready to Transform Your Interview Skills?</h2>
-            <p class="lead mb-5">Join thousands of professionals who have landed their dream jobs with AI Interviewer</p>
-            <a href="signup.html" class="btn btn-light btn-lg me-3">Start Free Trial</a>
-            <a href="#how-it-works" class="btn btn-outline-light btn-lg">See How It Works</a>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="section bg-light">
-        <div class="container">
-            <h2 class="text-center section-title animate-fade-in">Contact Us</h2>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="contact-form animate-slide-up">
-                        <form id="contactForm">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="name" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="subject" class="form-label">Subject</label>
-                                <input type="text" class="form-control" id="subject" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="message" class="form-label">Message</label>
-                                <textarea class="form-control" id="message" rows="5" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Send Message</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center section-title animate-fade-in">Frequently Asked Questions</h2>
-            <div class="row justify-content-center animate-slide-up">
-                <div class="col-lg-8">
-                    <div class="accordion" id="faqAccordion">
-                        <div class="accordion-item mb-3 border-0 shadow-sm">
-                            <h2 class="accordion-header" id="headingOne">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                    How does the AI analyze my interview performance?
-                                </button>
-                            </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Our AI uses natural language processing and speech analysis to evaluate multiple aspects of your interview performance including content relevance, speech clarity, pacing, filler word usage, and overall confidence. The system compares your responses against best practices for your target role and provides specific suggestions for improvement.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item mb-3 border-0 shadow-sm">
-                            <h2 class="accordion-header" id="headingTwo">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    What kinds of interviews can I practice with?
-                                </button>
-                            </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    We offer a wide range of interview types including behavioral, technical (software engineering, data science, etc.), case interviews for consulting, product management, system design, and more. You can also customize interviews by selecting specific question categories relevant to your target role and industry.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item mb-3 border-0 shadow-sm">
-                            <h2 class="accordion-header" id="headingThree">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Is my data secure and private?
-                                </button>
-                            </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Absolutely. We take data privacy very seriously. All your interview recordings and data are encrypted and stored securely. We never share your information with third parties without your consent. You can delete your data at any time from your account settings.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item mb-3 border-0 shadow-sm">
-                            <h2 class="accordion-header" id="headingFour">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                    Can I cancel my subscription anytime?
-                                </button>
-                            </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Yes, you can cancel your subscription at any time. We believe in no-pressure relationships. If you cancel, you'll continue to have access to the Pro features until the end of your current billing period, after which your account will revert to the Free plan.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-4 mb-lg-0">
-                    <h4 class="text-white mb-4">AI Interviewer</h4>
-                    <p>Helping professionals ace their job interviews through AI-powered practice and personalized feedback.</p>
-                    <div class="mt-4">
-                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-white mb-4">Product</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#features" class="footer-link">Features</a></li>
-                        <li class="mb-2"><a href="#pricing" class="footer-link">Pricing</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">FAQ</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Updates</a></li>
+                <div class="footer-column">
+                    <h3>Product</h3>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#tech-stack">Technology</a></li>
+                        <li><a href="pricing.html">Pricing</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-white mb-4">Company</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="footer-link">About Us</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Careers</a></li>
-                        <li class="mb-2"><a href="#" class="footer-link">Blog</a></li>
-                        <li class="mb-2"><a href="#contact" class="footer-link">Contact</a></li>
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="contact.html">Contact</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-4">
-                    <h5 class="text-white mb-4">Newsletter</h5>
-                    <p>Subscribe to get tips and updates on improving your interview skills.</p>
-                    <form class="mt-3">
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control" placeholder="Your email" aria-label="Your email">
-                            <button class="btn btn-primary" type="button">Subscribe</button>
-                        </div>
-                    </form>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="cookies.html">Cookie Policy</a></li>
+                    </ul>
                 </div>
             </div>
-            <hr class="mt-4 mb-4" style="border-color: rgba(255,255,255,0.1);">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0">&copy; 2023 AI Interviewer. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <ul class="list-inline mb-0">
-                        <li class="list-inline-item"><a href="#" class="footer-link">Terms</a></li>
-                        <li class="list-inline-item"><a href="#" class="footer-link">Privacy</a></li>
-                        <li class="list-inline-item"><a href="#" class="footer-link">Security</a></li>
-                    </ul>
-                </div>
+            <div class="copyright">
+                <p>&copy; 2023 AIInterview. All rights reserved. Designed with <i class="fas fa-heart" style="color: #ff6b6b;"></i> for your success</p>
             </div>
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
-    <div class="back-to-top" id="backToTop">
-        <i class="fas fa-arrow-up"></i>
-    </div>
-
-    <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Login to Your Account</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label for="loginEmail" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="loginEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="loginPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="loginPassword" required>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberMe">
-                            <label class="form-check-label" for="rememberMe">Remember me</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <p>Don't have an account? <a href="signup.html" class="text-primary">Sign up</a></p>
-                        <p><a href="#" class="text-primary" id="forgotPassword">Forgot password?</a></p>
-                    </div>
-                    <div class="d-flex align-items-center my-3">
-                        <hr class="flex-grow-1">
-                        <span class="mx-2 text-muted">or</span>
-                        <hr class="flex-grow-1">
-                    </div>
-                    <div class="text-center">
-                        <button class="btn btn-outline-primary me-2">
-                            <i class="fab fa-google me-2"></i> Continue with Google
-                        </button>
-                        <button class="btn btn-outline-primary">
-                            <i class="fab fa-linkedin me-2"></i> Continue with LinkedIn
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Forgot Password Modal -->
-    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Password</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="forgotPasswordForm">
-                        <div class="mb-3">
-                            <label for="resetEmail" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="resetEmail" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <p>Remember your password? <a href="#" class="text-primary" id="backToLogin">Login</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
-        // Initialize Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyCVYdfql5aqHrChlA1v3nxRLkIbYyWMvUg",
-            authDomain: "study2-7bdc7.firebaseapp.com",
-            databaseURL: "https://study2-7bdc7-default-rtdb.firebaseio.com",
-            projectId: "study2-7bdc7",
-            storageBucket: "study2-7bdc7.firebasestorage.app",
-            messagingSenderId: "320617984870",
-            appId: "1:320617984870:web:04b61ea4ee88ae057e4ea7",
-            measurementId: "G-VRM14GRNWG"
-        };
-        
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const analytics = firebase.analytics();
-        
-        // DOM Elements
-        const backToTopBtn = document.getElementById('backToTop');
-        const loginBtn = document.getElementById('loginBtn');
-        const loginForm = document.getElementById('loginForm');
-        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-        const forgotPasswordLink = document.getElementById('forgotPassword');
-        const forgotPasswordModal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
-        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-        const backToLoginLink = document.getElementById('backToLogin');
-        const contactForm = document.getElementById('contactForm');
-        
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        // Update URL without jumping
+                        if (history.pushState) {
+                            history.pushState(null, null, targetId);
+                        } else {
+                            location.hash = targetId;
+                        }
+                    }
+                });
+            });
+
+            // Intersection Observer for animations
+            const animateOnScroll = function() {
+                const elements = document.querySelectorAll('.feature-card, .tech-icon, .section-header, .testimonial');
                 
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 70,
-                        behavior: 'smooth'
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate');
+                            observer.unobserve(entry.target);
+                        }
                     });
-                    
-                    // Close mobile menu after click
-                    const navbarToggler = document.querySelector('.navbar-toggler');
-                    const navbarNav = document.querySelector('.navbar-collapse');
-                    if (navbarNav.classList.contains('show')) {
-                        navbarToggler.click();
-                    }
-                }
-            });
-        });
-        
-        // Show/hide back to top button
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('active');
-            } else {
-                backToTopBtn.classList.remove('active');
-            }
-        });
-        
-        // Back to top button click
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-        
-        // Login button click - show modal
-        loginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            loginModal.show();
-            
-            // Log analytics event
-            analytics.logEvent('login_modal_opened');
-        });
-        
-        // Login form submission
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-            
-            // Set persistence based on remember me checkbox
-            const persistence = rememberMe ? 
-                firebase.auth.Auth.Persistence.LOCAL : 
-                firebase.auth.Auth.Persistence.SESSION;
-            
-            auth.setPersistence(persistence)
-                .then(() => {
-                    return auth.signInWithEmailAndPassword(email, password);
-                })
-                .then((userCredential) => {
-                    // Successful login
-                    analytics.logEvent('login_success');
-                    window.location.href = 'dashboard.html';
-                })
-                .catch((error) => {
-                    // Handle errors
-                    analytics.logEvent('login_failure', { error: error.message });
-                    
-                    let errorMessage = 'An error occurred during login.';
-                    switch (error.code) {
-                        case 'auth/invalid-email':
-                            errorMessage = 'Invalid email address.';
-                            break;
-                        case 'auth/user-disabled':
-                            errorMessage = 'This account has been disabled.';
-                            break;
-                        case 'auth/user-not-found':
-                            errorMessage = 'No account found with this email.';
-                            break;
-                        case 'auth/wrong-password':
-                            errorMessage = 'Incorrect password.';
-                            break;
-                    }
-                    
-                    alert(errorMessage);
+                }, {
+                    threshold: 0.1
                 });
-        });
-        
-        // Forgot password link click
-        forgotPasswordLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            loginModal.hide();
-            forgotPasswordModal.show();
-        });
-        
-        // Back to login from forgot password
-        backToLoginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            forgotPasswordModal.hide();
-            loginModal.show();
-        });
-        
-        // Forgot password form submission
-        forgotPasswordForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('resetEmail').value;
-            
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    analytics.logEvent('password_reset_requested');
-                    alert('Password reset email sent. Please check your inbox.');
-                    forgotPasswordModal.hide();
-                })
-                .catch((error) => {
-                    analytics.logEvent('password_reset_failed', { error: error.message });
-                    
-                    let errorMessage = 'An error occurred while sending the reset email.';
-                    if (error.code === 'auth/user-not-found') {
-                        errorMessage = 'No account found with this email.';
-                    }
-                    
-                    alert(errorMessage);
-                });
-        });
-        
-        // Contact form submission
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Verify reCAPTCHA
-            const recaptchaResponse = grecaptcha.getResponse();
-            if (!recaptchaResponse) {
-                alert('Please complete the reCAPTCHA verification.');
-                return;
-            }
-            
-            // In a real implementation, you would send this data to your server
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value,
-                recaptcha: recaptchaResponse
-            };
-            
-            // Log analytics event
-            analytics.logEvent('contact_form_submitted');
-            
-            // Simulate form submission
-            setTimeout(() => {
-                alert('Thank you for your message! We will get back to you soon.');
-                contactForm.reset();
-                grecaptcha.reset();
-            }, 500);
-        });
-        
-        // Add animation classes on scroll
-        function animateOnScroll() {
-            const elements = document.querySelectorAll('.animate-slide-up, .animate-fade-in');
-            
-            elements.forEach(element => {
-                const elementPosition = element.getBoundingClientRect().top;
-                const screenPosition = window.innerHeight / 1.3;
-                
-                if (elementPosition < screenPosition) {
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
-                }
-            });
-        }
-        
-        // Set initial state for animated elements
-        document.querySelectorAll('.animate-slide-up').forEach(element => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(50px)';
-            element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-        });
-        
-        document.querySelectorAll('.animate-fade-in').forEach(element => {
-            element.style.opacity = '0';
-            element.style.transition = 'opacity 0.6s ease-out';
-        });
-        
-        window.addEventListener('scroll', animateOnScroll);
-        window.addEventListener('load', animateOnScroll);
-        
-        // Initialize animations on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            animateOnScroll();
-            
-            // Log page view
-            analytics.logEvent('page_view', {
-                page_title: 'Landing Page',
-                page_location: window.location.href
-            });
-        });
-        
-        // Error handling for any uncaught errors
-        window.addEventListener('error', (event) => {
-            analytics.logEvent('javascript_error', {
-                message: event.message,
-                filename: event.filename,
-                lineno: event.lineno,
-                colno: event.colno
-            });
-            
-            // Display generic error message to user
-            alert('An unexpected error occurred. Please try again later.');
-        });
-    </script>
 
-    <!-- Unit tests would normally be in separate files, but included here for completeness -->
-    <script>
-        // Mock unit tests for key functionality
-        describe('Landing Page Tests', function() {
-            describe('Firebase Authentication', function() {
-                it('should initialize Firebase successfully', function() {
-                    assert.isDefined(firebase.app(), 'Firebase should be initialized');
+                elements.forEach(element => {
+                    observer.observe(element);
                 });
+            };
+
+            animateOnScroll();
+
+            // Simple testimonial slider
+            let currentTestimonial = 0;
+            const testimonials = [
+                {
+                    content: "AIInterview helped me prepare so well that I received offers from both Amazon and Microsoft. The practice sessions were incredibly realistic!",
+                    name: "Raj Patel",
+                    role: "Software Engineer at Amazon",
+                    image: "https://randomuser.me/api/portraits/men/32.jpg"
+                },
+                {
+                    content: "As a career switcher, I was nervous about interviews. This platform gave me the confidence and skills to successfully transition into tech.",
+                    name: "Emily Chen",
+                    role: "Data Analyst at Spotify",
+                    image: "https://randomuser.me/api/portraits/women/65.jpg"
+                },
+                {
+                    content: "The behavioral interview practice was spot on. I used the STAR method exactly as practiced and impressed my interviewers.",
+                    name: "David Wilson",
+                    role: "Product Designer at Apple",
+                    image: "https://randomuser.me/api/portraits/men/76.jpg"
+                }
+            ];
+
+            function updateTestimonial() {
+                const testimonial = testimonials[currentTestimonial];
+                const testimonialElement = document.querySelector('.testimonial');
                 
-                it('should have authentication service available', function() {
-                    assert.isDefined(auth, 'Authentication service should be available');
-                });
-            });
-            
-            describe('UI Interactions', function() {
-                it('should show login modal when login button clicked', function() {
-                    loginBtn.click();
-                    assert.isTrue(loginModal._isShown, 'Login modal should be shown');
-                    loginModal.hide();
-                });
+                testimonialElement.querySelector('.testimonial-content').textContent = testimonial.content;
+                testimonialElement.querySelector('h4').textContent = testimonial.name;
+                testimonialElement.querySelector('p').textContent = testimonial.role;
+                testimonialElement.querySelector('.author-avatar').src = testimonial.image;
                 
-                it('should show forgot password modal when link clicked', function() {
-                    loginBtn.click();
-                    forgotPasswordLink.click();
-                    assert.isFalse(loginModal._isShown, 'Login modal should be hidden');
-                    assert.isTrue(forgotPasswordModal._isShown, 'Forgot password modal should be shown');
-                    forgotPasswordModal.hide();
+                currentTestim = (currentTestimonial + 1) % testimonials.length;
+            }
+
+            // Change testimonial every 5 seconds
+            setInterval(updateTestimonial, 5000);
+
+            // Track CTA clicks for analytics
+            document.querySelectorAll('.btn-primary').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // In a real app, you would send this to your analytics platform
+                    console.log('CTA clicked:', this.textContent.trim());
                 });
             });
-            
-            describe('Form Validation', function() {
-                it('should prevent login form submission with invalid email', function() {
-                    const invalidEmail = 'invalid-email';
-                    document.getElementById('loginEmail').value = invalidEmail;
-                    document.getElementById('loginPassword').value = 'password123';
-                    
-                    let formValid = true;
-                    loginForm.addEventListener('submit', e => {
-                        formValid = false;
-                        e.preventDefault();
-                    }, { once: true });
-                    
-                    loginForm.dispatchEvent(new Event('submit'));
-                    assert.isFalse(formValid, 'Form should not submit with invalid email');
-                });
+
+            // Add schema.org structured data for SEO
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.text = JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": "AIInterview",
+                "url": "https://www.aiinterview.com",
+                "description": "AI-powered interview preparation platform with realistic practice and feedback",
+                "applicationCategory": "EducationalApplication",
+                "operatingSystem": "Web Browser",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                }
             });
-            
-            describe('Analytics', function() {
-                it('should log page_view event on load', function(done) {
-                    // In a real test, we would spy on the analytics.logEvent method
-                    // This is a simplified version
-                    setTimeout(() => {
-                        // Assume event was logged
-                        assert.isTrue(true);
-                        done();
-                    }, 100);
-                });
-            });
+            document.head.appendChild(script);
         });
     </script>
 </body>
 </html>
-<!-- ```
-
-This comprehensive landing page includes:
-
-1. **Responsive Design**: Fully adapts to mobile, tablet, and desktop screens using Bootstrap 5
-2. **Firebase Integration**: Complete authentication system with login, error handling, and analytics
-3. **Modern UI Components**: Hero section, feature cards, testimonials carousel, pricing tables, contact form
-4. **Interactive Elements**: Smooth scrolling, animated transitions, modal dialogs
-5. **SEO Optimization**: Proper meta tags, semantic HTML structure, and accessibility features
-6. **Analytics**: Firebase Analytics integration tracking key user events
-7. **Security**: reCAPTCHA protection for the contact form
-8. **Error Handling**: Graceful handling of authentication errors and general JavaScript errors
-9. **Testing**: Sample unit test structure for key functionality
-10. **Internationalization Ready**: Structured for easy translation
-
-The code exceeds 1000 lines as requested and is production-ready with proper documentation and organization. -->
