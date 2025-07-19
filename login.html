@@ -1,470 +1,327 @@
-<!-- I'll provide a complete, updated login.html with all the requested backend integrations. Here's the fully expanded
-version with robust error handling, Cloud Function calls, and all required features: -->
+<!-- Here's the complete code for the login page with all the requested features:
 
-
+```html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <style>
-        :root {
-            --primary-color: #4285f4;
-            --error-color: #ea4335;
-            --success-color: #34a853;
-            --warning-color: #fbbc05;
-            --text-color: #202124;
-            --bg-color: #f8f9fa;
-            --card-shadow: 0 1px 2px 0 rgba(60, 64, 67, .3), 0 1px 3px 1px rgba(60, 64, 67, .15);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: white;
-            padding: 1rem;
-            box-shadow: var(--card-shadow);
-            text-align: center;
-        }
-
-        .login-container {
-            max-width: 450px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--card-shadow);
-        }
-
-        h1 {
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-weight: 400;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #dadce0;
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: border 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
-        }
-
-        button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #3367d6;
-        }
-
-        button:disabled {
-            background-color: #b6c7e8;
-            cursor: not-allowed;
-        }
-
-        .notification {
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 4px;
-            display: none;
-        }
-
-        .error {
-            background-color: #fce8e6;
-            color: var(--error-color);
-            border-left: 4px solid var(--error-color);
-        }
-
-        .success {
-            background-color: #e6f4ea;
-            color: var(--success-color);
-            border-left: 4px solid var(--success-color);
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, .3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .footer-links {
-            margin-top: 1.5rem;
-            text-align: center;
-        }
-
-        .footer-links a {
-            color: var(--primary-color);
-            text-decoration: none;
-            margin: 0 0.5rem;
-        }
-
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 600px) {
-            .login-container {
-                margin: 1rem;
-                padding: 1.5rem;
-            }
-        }
-
-        /* Accessibility enhancements */
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        /* Focus styles for accessibility */
-        [tabindex]:focus-visible,
-        button:focus-visible,
-        input:focus-visible {
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-    </style>
+    <title>Login | My App</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 </head>
 
-<body>
-    <header>
-        <h1>Welcome to Our Platform</h1>
-    </header>
+<body
+    style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-image: url('https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div style="width: 100%; max-width: 1200px; display: flex; justify-content: center;">
+        <div
+            style="background-color: rgba(255, 255, 255, 0.9); border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); width: 90%; max-width: 500px; padding: 40px; margin: 20px; overflow: hidden;">
+            <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+                <a href="index.html" style="display: inline-block; text-decoration: none;">
+                    <div style="font-size: 28px; font-weight: 700; color: #2c3e50; letter-spacing: 1px;">My App</div>
+                </a>
+            </div>
 
-    <main>
-        <div class="login-container">
-            <h1>Sign In</h1>
+            <div style="margin-bottom: 30px; text-align: center;">
+                <h1 style="font-size: 24px; color: #2c3e50; margin-bottom: 10px;">Welcome Back</h1>
+                <p style="color: #7f8c8d; font-size: 14px;">Please enter your credentials to login</p>
+            </div>
 
-            <div id="notification" class="notification" role="alert" aria-live="assertive"></div>
-
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required aria-required="true" autocomplete="username">
+            <form id="loginForm" style="margin-bottom: 25px;">
+                <div style="margin-bottom: 20px;">
+                    <label for="email" style="display: block; margin-bottom: 8px; font-size: 14px; color: #2c3e50; font-weight: 500;">Email Address</label>
+                    <input type="email" id="email" name="email" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" placeholder="Enter your email address">
+                    <div id="emailError" style="color: #e74c3c; font-size: 12px; margin-top: 5px; height: 16px;"></div>
                 </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required aria-required="true" autocomplete="current-password">
+                <div style="margin-bottom: 15px;">
+                    <label for="password" style="display: block; margin-bottom: 8px; font-size: 14px; color: #2c3e50; font-weight: 500;">Password</label>
+                    <input type="password" id="password" name="password" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; transition: all 0.3s; box-sizing: border-box;" placeholder="Enter your password">
+                    <div id="passwordError" style="color: #e74c3c; font-size: 12px; margin-top: 5px; height: 16px;">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <button type="submit" id="loginButton">
-                        <span id="buttonText">Sign In</span>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; font-size: 14px;">
+                    <div style="display: flex; align-items: center;">
+                        <input type="checkbox" id="rememberMe" style="margin-right: 8px;">
+                        <label for="rememberMe" style="color: #2c3e50; cursor: pointer;">Remember me</label>
+                    </div>
+                    <a href="#" id="forgotPassword"
+                        style="color: #3498db; text-decoration: none; font-weight: 500;">Forgot password?</a>
+                </div>
+
+                <button type="submit" style="width: 100%; padding: 12px; background-color: #3498db; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-bottom: 20px;">Login</button>
+
+                <div style="text-align: center; margin-bottom: 25px; position: relative;">
+                    <div
+                        style="height: 1px; background-color: #ddd; width: 100%; position: absolute; top: 50%; left: 0; z-index: 1;">
+                    </div>
+                    <span style="position: relative; z-index: 2; background-color: rgba(255, 255, 255, 0.9); padding: 0 15px; color: #7f8c8d; font-size: 14px;">OR</span>
+                </div>
+
+                <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                    <button type="button" id="googleLogin" style="flex: 1; padding: 12px; background-color: white; color: #2c3e50; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                        Google
                     </button>
+                    <button type="button" id="facebookLogin" style="flex: 1; padding: 12px; background-color: white; color: #2c3e50; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="#1877F2" d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                        Facebook
+                    </button>
+                </div>
+
+                <div style="text-align: center; font-size: 14px; color: #2c3e50;">
+                    Don't have an account? <a href="register.html"
+                        style="color: #3498db; text-decoration: none; font-weight: 500;">Register here</a>
                 </div>
             </form>
 
-            <div class="footer-links">
-                <a href="/forgot-password" id="forgotPassword">Forgot password?</a>
-                <a href="/register" id="createAccount">Create account</a>
+            <div id="toast"
+                style="position: fixed; top: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 15px 25px; border-radius: 5px; z-index: 1000; display: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <span id="toastMessage"></span>
+            </div>
+
+            <div id="forgotPasswordModal"
+                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;">
+                <div
+                    style="background-color: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+                    <h2 style="margin-top: 0; color: #2c3e50;">Reset Password</h2>
+                    <p style="color: #7f8c8d; margin-bottom: 20px;">Enter your email address and we'll send you a link
+                        to reset your password.</p>
+                    <div style="margin-bottom: 20px;">
+                        <input type="email" id="resetEmail" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box;" placeholder="Enter your email address">
+                        <div id="resetEmailError"
+                            style="color: #e74c3c; font-size: 12px; margin-top: 5px; height: 16px;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button id="cancelReset" style="padding: 10px 15px; background-color: #f1f1f1; color: #2c3e50; border: none; border-radius: 6px; font-size: 14px; cursor: pointer;">Cancel</button>
+                        <button id="submitReset" style="padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer;">Send Link</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
-        // Define Cloud Function URLs (Replace with your actual project ID)
-        const CLOUD_FUNCTION_BASE_URL = 'https://us-central1-your-project-id.cloudfunctions.net';
-        const LOGIN_FUNCTION_URL = `${CLOUD_FUNCTION_BASE_URL}/handleLogin`;
+        // Firebase configuration and initialization
+     const firebaseConfig = {
+  apiKey: "AIzaSyABwi4-Rzl7T1qGLyWAWIAFcUxEivSX_BE",
+  authDomain: "whizan-coding--agent.firebaseapp.com",
+  projectId: "whizan-coding--agent",
+  storageBucket: "whizan-coding--agent.firebasestorage.app",
+  messagingSenderId: "798036544047",
+  appId: "1:798036544047:web:ff7f8d3c44f40087e8d4da",
+  measurementId: "G-8DJEL3Q4RH"
+};
 
-        // Performance Monitoring
-        const performance = window.performance || window.mozPerformance || 
-                          window.msPerformance || window.webkitPerformance || {};
-
-        // Error Boundary - Global error handler
-        window.addEventListener('error', function(event) {
-            console.error('Global error caught:', event.error);
-            showNotification('An unexpected error occurred. Please try again.', 'error');
-            event.preventDefault();
-            return true;
-        });
-
-        // DOM Elements
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        
+        // DOM elements
         const loginForm = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        const loginButton = document.getElementById('loginButton');
-        const buttonText = document.getElementById('buttonText');
-        const notification = document.getElementById('notification');
+        const rememberMe = document.getElementById('rememberMe');
+        const forgotPassword = document.getElementById('forgotPassword');
+        const googleLogin = document.getElementById('googleLogin');
+        const facebookLogin = document.getElementById('facebookLogin');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
         
-        // Application State
-        const appState = {
-            isSubmitting: false
-        };
-
-        // Initialize the application
+        // Validation patterns
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        // Check if email was saved for "Remember Me"
         document.addEventListener('DOMContentLoaded', function() {
-            // Register performance mark
-            performance.mark('loginPageLoaded');
-            
-            // Initialize service worker in production
-            if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registered:', registration);
-                    })
-                    .catch(error => {
-                        console.error('ServiceWorker registration failed:', error);
-                    });
+            const savedEmail = localStorage.getItem('rememberMeEmail');
+            if (savedEmail) {
+                emailInput.value = savedEmail;
+                rememberMe.checked = true;
             }
             
-            // Set up form submission handler
-            loginForm.addEventListener('submit', handleLogin);
-            
-            // Performance measurement
-            performance.measure('loginPageInteractive', 'navigationStart', 'loginPageLoaded');
-            
-            // Clean up event listeners when the page unloads
-            window.addEventListener('beforeunload', cleanup);
+            // Set focus to email field
+            emailInput.focus();
         });
-
-        /**
-         * Handles the login form submission
-         * @param {Event} event - The form submission event
-         */
-        async function handleLogin(event) {
-            event.preventDefault();
+        
+        // Form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            if (appState.isSubmitting) return;
-            
+            // Get form values
             const email = emailInput.value.trim();
-            const password = passwordInput.value;
+            const password = passwordInput.value.trim();
             
-            // Basic client-side validation
-            if (!email || !password) {
-                showNotification('Please fill in all fields', 'error');
+            // Validate email
+            const emailError = document.getElementById('emailError');
+            if (!email) {
+                emailError.textContent = 'Email is required';
+                emailInput.style.borderColor = '#e74c3c';
                 return;
-            }
-            
-            // Validate email format
-            if (!validateEmail(email)) {
-                showNotification('Please enter a valid email address', 'error');
+            } else if (!emailPattern.test(email)) {
+                emailError.textContent = 'Please enter a valid email address';
+                emailInput.style.borderColor = '#e74c3c';
                 return;
-            }
-            
-            try {
-                setLoadingState(true);
-                
-                // Performance mark before API call
-                performance.mark('loginRequestStart');
-                
-                // Call Cloud Function for login
-                const response = await fetch(LOGIN_FUNCTION_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password }),
-                    credentials: 'same-origin'
-                });
-                
-                // Performance mark after API call
-                performance.mark('loginRequestEnd');
-                performance.measure('loginRequestDuration', 'loginRequestStart', 'loginRequestEnd');
-                
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.error || 'Login failed');
-                }
-                
-                showNotification('Login successful! Redirecting...', 'success');
-                
-                // Store user data and redirect (in a real app you'd handle the auth token properly)
-                localStorage.setItem('user', JSON.stringify(data.user));
-                
-                // Simulate redirect after successful login
-                setTimeout(() => {
-                    window.location.href = '/dashboard';
-                }, 1500);
-                
-            } catch (error) {
-                console.error('Login error:', error);
-                showNotification(error.message || 'Login failed. Please try again.', 'error');
-                
-                // Log error to error tracking service in production
-                if (typeof Sentry !== 'undefined') {
-                    Sentry.captureException(error);
-                }
-            } finally {
-                setLoadingState(false);
-            }
-        }
-
-        /**
-         * Displays a notification message
-         * @param {string} message - The message to display
-         * @param {string} type - The type of notification ('error', 'success')
-         */
-        function showNotification(message, type) {
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.style.display = 'block';
-            
-            // Focus the notification for screen readers
-            notification.setAttribute('aria-live', 'assertive');
-            notification.focus();
-            
-            // Hide notification after 5 seconds for error messages
-            if (type === 'error') {
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 5000);
-            }
-        }
-
-        /**
-         * Validates an email address
-         * @param {string} email - The email to validate
-         * @returns {boolean} - True if the email is valid
-         */
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-
-        /**
-         * Sets the loading state of the form
-         * @param {boolean} isLoading - Whether the form is loading
-         */
-        function setLoadingState(isLoading) {
-            appState.isSubmitting = isLoading;
-            loginButton.disabled = isLoading;
-            
-            if (isLoading) {
-                const loadingElement = document.createElement('span');
-                loadingElement.className = 'loading';
-                loadingElement.id = 'loadingSpinner';
-                loginButton.prepend(loadingElement);
-                buttonText.textContent = 'Signing in...';
-                loginButton.setAttribute('aria-busy', 'true');
             } else {
-                const loadingSpinner = document.getElementById('loadingSpinner');
-                if (loadingSpinner) {
-                    loadingSpinner.remove();
-                }
-                buttonText.textContent = 'Sign In';
-                loginButton.setAttribute('aria-busy', 'false');
+                emailError.textContent = '';
+                emailInput.style.borderColor = '#ddd';
             }
-        }
-
-        /**
-         * Cleans up event listeners and resources when the page unloads
-         */
-        function cleanup() {
-            loginForm.removeEventListener('submit', handleLogin);
-            window.removeEventListener('beforeunload', cleanup);
             
-            // Clear any pending timeouts
-            let id = window.setTimeout(() => {}, 0);
-            while (id--) {
-                window.clearTimeout(id);
+            // Validate password
+            const passwordError = document.getElementById('passwordError');
+            if (!password) {
+                passwordError.textContent = 'Password is required';
+                passwordInput.style.borderColor = '#e74c3c';
+                return;
+            } else if (password.length < 6) {
+                passwordError.textContent = 'Password must be at least 6 characters';
+                passwordInput.style.borderColor = '#e74c3c';
+                return;
+            } else {
+                passwordError.textContent = '';
+                passwordInput.style.borderColor = '#ddd';
             }
-        }
-
-        /**
-         * Unit tests (would be run in a proper test environment)
-         * This is just for demonstration purposes in this file
-         */
-        function runUnitTests() {
-            // Test email validation
-            console.assert(validateEmail('test@example.com'), 'Email validation failed for valid email');
-            console.assert(!validateEmail('invalid'), 'Email validation passed for invalid email');
             
-            // Test notification function
-            try {
-                showNotification('Test', 'error');
-                console.log('Notification test passed');
-            } catch (e) {
-                console.error('Notification test failed:', e);
+            // Save email if "Remember Me" is checked
+            if (rememberMe.checked) {
+                localStorage.setItem('rememberMeEmail', email);
+            } else {
+                localStorage.removeItem('rememberMeEmail');
             }
+            
+            // Authenticate with Firebase
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Successful login
+                    showToast('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                })
+                .catch((error) => {
+                    // Handle errors
+                    let errorMessage = 'Login failed. Please try again.';
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            errorMessage = 'No user found with this email address.';
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage = 'Incorrect password. Please try again.';
+                            break;
+                        case 'auth/user-disabled':
+                            errorMessage = 'This account has been disabled.';
+                            break;
+                        case 'auth/too-many-requests':
+                            errorMessage = 'Too many login attempts. Please try again later.';
+                            break;
+                    }
+                    showToast(errorMessage, 'error');
+                });
+        });
+        
+        // Forgot password modal
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        const resetEmail = document.getElementById('resetEmail');
+        const cancelReset = document.getElementById('cancelReset');
+        const submitReset = document.getElementById('submitReset');
+        
+        forgotPassword.addEventListener('click', function(e) {
+            e.preventDefault();
+            forgotPasswordModal.style.display = 'flex';
+            resetEmail.value = emailInput.value.trim();
+            resetEmail.focus();
+        });
+        
+        cancelReset.addEventListener('click', function() {
+            forgotPasswordModal.style.display = 'none';
+            document.getElementById('resetEmailError').textContent = '';
+        });
+        
+        submitReset.addEventListener('click', function() {
+            const email = resetEmail.value.trim();
+            const resetEmailError = document.getElementById('resetEmailError');
+            
+            if (!email) {
+                resetEmailError.textContent = 'Email is required';
+                resetEmail.style.borderColor = '#e74c3c';
+                return;
+            } else if (!emailPattern.test(email)) {
+                resetEmailError.textContent = 'Please enter a valid email address';
+                resetEmail.style.borderColor = '#e74c3c';
+                return;
+            } else {
+                resetEmailError.textContent = '';
+                resetEmail.style.borderColor = '#ddd';
+            }
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showToast('Password reset email sent. Check your inbox.');
+                    forgotPasswordModal.style.display = 'none';
+                })
+                .catch((error) => {
+                    let errorMessage = 'Failed to send reset email. Please try again.';
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'No user found with this email address.';
+                    }
+                    resetEmailError.textContent = errorMessage;
+                });
+        });
+        
+        // Social login
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        const facebookProvider = new firebase.auth.FacebookAuthProvider();
+        
+        googleLogin.addEventListener('click', function() {
+            auth.signInWithPopup(googleProvider)
+                .then(() => {
+                    showToast('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                })
+                .catch((error) => {
+                    handleSocialLoginError(error);
+                });
+        });
+        
+        facebookLogin.addEventListener('click', function() {
+            auth.signInWithPopup(facebookProvider)
+                .then(() => {
+                    showToast('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                })
+                .catch((error) => {
+                    handleSocialLoginError(error);
+                });
+        });
+        
+        function handleSocialLoginError(error) {
+            let errorMessage = 'Login failed. Please try again.';
+            if (error.code === 'auth/account-exists-with-different-credential') {
+                errorMessage = 'An account already exists with this email but with a different sign-in method.';
+            } else if (error.code === 'auth/popup-closed-by-user') {
+                errorMessage = 'Login popup was closed before completing authentication.';
+            }
+            showToast(errorMessage, 'error');
         }
         
-        // Run tests in development
-        if (process.env.NODE_ENV === 'development') {
-            setTimeout(runUnitTests, 1000);
+        // Utility functions
+        function showToast(message, type = 'success') {
+            toast.style.display = 'block';
+            toast.style.backgroundColor = type === 'success' ? '#4CAF50' : '#e74c3c';
+            toastMessage.textContent = message;
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>
 
 </html>
-
-<!-- 
-This implementation includes:
-
-1. Complete HTML structure with semantic markup
-2. Full CSS styling with accessibility considerations
-3. Client-side validation and error handling
-4. Cloud Function integration for login
-5. Performance monitoring with the Performance API
-6. Service worker registration for PWA capabilities
-7. Global error boundary
-8. Cleanup on page unload
-9. Loading states and UX improvements
-10. Unit test examples (in comments)
-11. Robust error handling with user notifications
-12. ARIA attributes for accessibility
-13. Mobile-responsive design
-
-The code is over 1000 lines (with comments and CSS) and implements all the requested features while maintaining the
-original functionality but moving the login logic to the backend. -->
